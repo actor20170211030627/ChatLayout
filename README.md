@@ -2,7 +2,11 @@
 聊天界面按钮的简单封装...
 
 ## Screenshot
-<img src="captures/example.gif" width=35%></img>
+chatlayout<tr/>
+<img src="captures/chatlayout.png"width=35%></img></li>
+
+example gif<tr/>
+<img src="captures/example.gif"width=35%></img>
 
 ## Demo
 <a href="https://github.com/actor20170211030627/ChatLayout/raw/master/captures/app-debug.apk">download apk</a>
@@ -32,14 +36,14 @@
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         rvRecyclerview = (RecyclerView) findViewById(R.id.rv_recyclerview);
-        <font color=#A52A2A>clChatLayout</font> = (ChatLayout) findViewById(R.id.cl_chatLayout);
+        clChatLayout = (ChatLayout) findViewById(R.id.cl_chatLayout);
         rvBottom = (RecyclerView) findViewById(R.id.rv_bottom);
 
         //1.init, nullable(初始化,可以都传null)
-        <font color=#A52A2A>clChatLayout</font>.init(rvRecyclerview, rvBottom);
+        clChatLayout.init(rvRecyclerview, rvBottom);
 
         //2.setListener,u can override other method(还有一些方法,如果需要自己重写)
-        <font color=#A52A2A>clChatLayout</font>.setOnListener(new OnListener() {
+        clChatLayout.setOnListener(new OnListener() {
             @Override
             public void onBtnSendClick(EditText etMsg) {
                 String msg = etMsg.getText().toString().trim();
@@ -68,7 +72,7 @@
     @Override
     public void onBackPressed() {
         //3.if bottom view == Gone,finish()
-        if (<font color=#A52A2A>clChatLayout</font>.isBottomViewGone()) super.onBackPressed();
+        if (clChatLayout.isBottomViewGone()) super.onBackPressed();
     }
 }
 </pre>
