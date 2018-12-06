@@ -2,11 +2,11 @@
 聊天界面按钮的简单封装...
 
 ## Screenshot
-chatlayout<tr/>
-<img src="captures/chatlayout.png"width=35%></img></li>
+#### chatlayout
+<img src="captures/chatlayout.png" width=35%></img>
 
-example gif<tr/>
-<img src="captures/example.gif"width=35%></img>
+#### example gif
+<img src="captures/example.gif" width=35%></img>
 
 ## Demo
 <a href="https://github.com/actor20170211030627/ChatLayout/raw/master/captures/app-debug.apk">download apk</a>
