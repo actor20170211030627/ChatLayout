@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_stroke"
+    android:orientation="horizontal"
+    tools:context=".ChatLayout">
+
+    <ImageView
+        android:id="@+id/iv_voice"
+        android:layout_width="42dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:src="@drawable/selector_btn_voice"/>
+
+    <ImageView
+        android:id="@+id/iv_keyboard"
+        android:layout_width="42dp"
+        android:layout_height="48dp"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:src="@drawable/selector_btn_keyboard"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <EditText
+        android:id="@+id/et_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:layout_weight="1"
+        android:background="@drawable/selector_bg_et_msg"
+        android:hint="发送消息"
+        android:maxLines="5"
+        android:minHeight="36dp"
+        android:paddingLeft="6dp"/>
+
+    <TextView
+        android:id="@+id/tv_press_speak"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="6dp"
+        android:layout_weight="1"
+        android:background="@drawable/shape_bg_press_speak"
+        android:gravity="center"
+        android:text="按住 说话"
+        android:textColor="#666666"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/iv_emoji"
+        android:layout_width="32dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:layout_marginRight="8dp"
+        android:clickable="true"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:src="@drawable/selector_btn_emoji"/>
+
+    <FrameLayout
+        android:id="@+id/fl_parent"
+        android:layout_width="42dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:layout_marginRight="8dp">
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="42dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:background="@drawable/selector_btn_send"
+            android:text="发送"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/iv_sendplus"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_gravity="left|center_vertical"
+            android:src="@drawable/selector_btn_plus"/>
+    </FrameLayout>
+</LinearLayout>
