@@ -36,9 +36,9 @@ import android.widget.TextView;
  *     </li>
  *     <li>★★★注意:应该重写onBackPressed方法,示例:★★★</li>
  *     <li>&emsp;@Override</li>
- *     <li>&emsp;public void isBottomViewGone() {</li>
+ *     <li>&emsp;public void onBackPressed() {</li>
  *     <li>&emsp;&emsp;if (chatLayout.isBottomViewGone()) {</li>
- *     <li>&emsp;&emsp;&emsp;super.isBottomViewGone();//自己页面的逻辑</li>
+ *     <li>&emsp;&emsp;&emsp;super.onBackPressed();//自己页面的逻辑</li>
  *     <li>&emsp;&emsp;}</li>
  *     <li>&emsp;}</li>
  *     <li></li>

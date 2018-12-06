@@ -29,5 +29,5 @@ dependencies {
     compile 'com.android.support:support-v4:25.0.0'
     testCompile 'junit:junit:4.12'
     compile project(':chatlayout')
-//    compile 'com.github.actor20170211030627:ChatLayout-master:1.0'
+//    compile 'com.github.actor20170211030627:ChatLayout:1.0'
 }
