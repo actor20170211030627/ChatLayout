@@ -2,10 +2,10 @@
 聊天界面按钮的简单封装...
 
 ## Screenshot
-<img src="https://github.com/actor20170211030627/actor20170211030627/captures/example.gif"></img>
+<img src="captures/example.gif" width=35%></img>
 
 ## Demo
-<a href="https://github.com/actor20170211030627/actor20170211030627/captures/app-debug.apk" target="_blank">download apk</a>
+<a href="https://github.com/actor20170211030627/ChatLayout/blob/master/captures/app-debug.apk" target="_blank">download apk</a>
 
 ## Usage
 <ol>
