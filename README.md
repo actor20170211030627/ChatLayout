@@ -2,10 +2,10 @@
 聊天界面按钮的简单封装...
 
 ## Screenshot
-#### chatlayout
+#### 1.chatlayout
 <img src="captures/chatlayout.png" width=35%></img>
 
-#### example gif
+#### 2.example gif
 <img src="captures/example.gif" width=35%></img>
 
 ## Demo
