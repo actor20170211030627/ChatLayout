@@ -5,7 +5,7 @@
 <img src="captures/example.gif" width=35%></img>
 
 ## Demo
-<a href="https://github.com/actor20170211030627/ChatLayout/blob/master/captures/app-debug.apk" target="_blank">download apk</a>
+<a href="captures/app-debug.apk">download apk</a>
 
 ## Usage
 <ol>
