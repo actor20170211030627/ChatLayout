@@ -9,7 +9,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 /**
- * Description:设置RecuclerView间距.Decoration:装饰物
+ * Description:设置RecyclerView间距.Decoration:装饰物
  * 设置RecyclerView的LinearLayoutManager&GridLayoutManager&StaggeredGridLayoutManager水平/垂直间距
  * 示例用法:recyclerView.addItemDecoration(new RVItemDecoration(UiUtils.dp2px(20), UiUtils.dp2px(20)));
  * Copyright  : Copyright (c) 2018
