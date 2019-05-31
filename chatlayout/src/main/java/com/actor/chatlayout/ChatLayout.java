@@ -231,7 +231,7 @@ public class ChatLayout extends LinearLayout {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (onListener != null) onListener.onTvPressSpeakTouch(tvPressSpeak, event);
-                return false;
+                return true;
             }
         });
 
