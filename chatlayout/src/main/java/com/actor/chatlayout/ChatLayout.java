@@ -1,11 +1,23 @@
 package com.actor.chatlayout;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -49,6 +61,7 @@ import android.widget.TextView;
  */
 public class ChatLayout extends LinearLayout {
 
+    private static final String TAG = ChatLayout.class.getName();
     private View listView;//上面列表View
     private ImageView ivVoice;
     private ImageView ivKeyboard;
@@ -68,6 +81,13 @@ public class ChatLayout extends LinearLayout {
     private OnListener onListener;
     private boolean isKeyboardActive = false; //输入法是否激活
     private KeyboardOnGlobalChangeListener keyboardOnGlobalChangeListener;//onDetachedFromWindow中注销
+
+    private VoiceRecorderView voiceRecorderView;//按住说话
+    private boolean           audioRecordIsCancel;//语音录制是否已取消
+    private float             startRecordY;//按下时的y坐标
+    private AlertDialog       mPermissionDialog;
+    private FragmentManager fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
+    private Fragment emojiFragment, moreFragment;
 
     public ChatLayout(Context context) {
         this(context, null);
@@ -89,14 +109,14 @@ public class ChatLayout extends LinearLayout {
          */
         //1.给SettingItemView(RelatuveLayout)填充布局
         View inflate = View.inflate(context, R.layout.layout_center_buttons, this);
-        ivVoice = (ImageView) inflate.findViewById(R.id.iv_voice);
-        ivKeyboard = (ImageView) inflate.findViewById(R.id.iv_keyboard);
-        etMsg = (EditText) inflate.findViewById(R.id.et_msg);
-        tvPressSpeak = (TextView) inflate.findViewById(R.id.tv_press_speak);
-        ivEmoji = (ImageView) inflate.findViewById(R.id.iv_emoji);
-        flParent = (FrameLayout) inflate.findViewById(R.id.fl_parent);
-        btnSend = (Button) inflate.findViewById(R.id.btn_send);
-        ivSendPlus = (ImageView) inflate.findViewById(R.id.iv_sendplus);
+        ivVoice = inflate.findViewById(R.id.iv_voice);
+        ivKeyboard = inflate.findViewById(R.id.iv_keyboard);
+        etMsg = inflate.findViewById(R.id.et_msg);
+        tvPressSpeak = inflate.findViewById(R.id.tv_press_speak);
+        ivEmoji = inflate.findViewById(R.id.iv_emoji);
+        flParent = inflate.findViewById(R.id.fl_parent);
+        btnSend = inflate.findViewById(R.id.btn_send);
+        ivSendPlus = inflate.findViewById(R.id.iv_sendplus);
         if (attrs != null) {
             TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ChatLayout);
             ivVoiceVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvVoiceVisiable, true);
@@ -118,10 +138,12 @@ public class ChatLayout extends LinearLayout {
      * 初始化
      * @param mListView 用来设置触摸事件,响应隐藏键盘
      * @param mBottomView 用来设置和键盘一样的高度
+     * @param voiceRecorderView 按住说话View
      */
-    public void init(View mListView, View mBottomView) {
+    public void init(View mListView, View mBottomView, VoiceRecorderView voiceRecorderView) {
         this.listView = mListView;
         this.bottomView = mBottomView;
+        this.voiceRecorderView = voiceRecorderView;
         if (listView != null) {
             listView.setOnTouchListener(new OnTouchListener() {
                 @Override
@@ -144,6 +166,32 @@ public class ChatLayout extends LinearLayout {
                 params.height = keyboardHeight;
                 bottomView.setLayoutParams(params);
             }
+        }
+        if (voiceRecorderView != null) voiceRecorderView.setVisibility(GONE);
+        UIKitAudioArmMachine.init(getContext(), null);//初始化录音, 默认最大录音时长2分钟
+    }
+
+    /**
+     * 设置下方显示的emoji & more Fragment
+     * @param fragmentManager
+     * @param emojiFragment
+     * @param moreFragment
+     */
+    public void setBottomFragments(FragmentManager fragmentManager, Fragment emojiFragment, Fragment moreFragment) {
+        this.fragmentManager = fragmentManager;
+        this.emojiFragment = emojiFragment;
+        this.moreFragment = moreFragment;
+        if (bottomView != null && fragmentManager != null) {
+            FragmentTransaction fragmentTransaction = this.fragmentManager.beginTransaction();
+            if (this.emojiFragment != null) {
+                fragmentTransaction.add(bottomView.getId(), this.emojiFragment)
+                        .hide(this.emojiFragment);
+            }
+            if (this.moreFragment != null) {
+                fragmentTransaction.add(bottomView.getId(), this.moreFragment)
+                        .hide(this.moreFragment);
+            }
+            fragmentTransaction.commit();
         }
     }
 
@@ -179,6 +227,7 @@ public class ChatLayout extends LinearLayout {
     /**
      * 填充完成
      */
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -228,9 +277,77 @@ public class ChatLayout extends LinearLayout {
 
         //语音按钮
         tvPressSpeak.setOnTouchListener(new OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (onListener != null) onListener.onTvPressSpeakTouch(tvPressSpeak, event);
+                v.onTouchEvent(event);
+                if (onListener != null) {
+                    onListener.onTvPressSpeakTouch(tvPressSpeak, event);
+                    //如果语音按钮显示 && 按下录音View不为空
+                    if (ivVoiceVisiable && voiceRecorderView != null) {
+                        if (!checkStoragePermisson(Manifest.permission.RECORD_AUDIO)) {
+                            onListener.onNoPermission(Manifest.permission.RECORD_AUDIO);
+                        } else if (!checkStoragePermisson(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            onListener.onNoPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        } else if (!checkStoragePermisson(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                            onListener.onNoPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        } else {
+                            switch (event.getAction()) {
+                                case MotionEvent.ACTION_DOWN:
+                                    audioRecordIsCancel = false;
+                                    startRecordY = event.getY();
+                                    voiceRecorderView.startRecording();
+                                    UIKitAudioArmMachine.getInstance().startRecord(new UIKitAudioArmMachine.AudioRecordCallback() {
+                                        @Override
+                                        public void recordComplete(long duration) {
+                                            if (audioRecordIsCancel) {
+                                                voiceRecorderView.stopRecording();
+                                                return;
+                                            }
+                                            if (duration < 500) {
+                                                voiceRecorderView.tooShortRecording();
+                                                return;
+                                            }
+                                            voiceRecorderView.stopRecording();
+                                            String recordAudioPath =//语音路径
+                                                    UIKitAudioArmMachine.getInstance().getRecordAudioPath();
+                                            if (!TextUtils.isEmpty(recordAudioPath))
+                                            onListener.onVoiceRecordSuccess(recordAudioPath, duration);
+                                        }
+
+                                        @Override
+                                        public void recordError(final Exception e) {//子线程
+                                            post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    voiceRecorderView.stopRecording();
+                                                    onListener.onVoiceRecordError(e);
+                                                }
+                                            });
+                                        }
+                                    });
+                                    break;
+                                case MotionEvent.ACTION_MOVE:
+                                    if (event.getY() - startRecordY < -100) {
+                                        audioRecordIsCancel = true;
+                                        voiceRecorderView.release2CancelRecording();//松开手指取消发送
+                                    } else {
+                                        audioRecordIsCancel = false;
+                                        voiceRecorderView.startRecording();//开始录音
+                                    }
+                                    break;
+                                case MotionEvent.ACTION_UP:
+//                                    if (event.getY() - startRecordY < -100) {
+//                                        audioRecordIsCancel = true;
+//                                    } else {
+//                                        audioRecordIsCancel = false;
+//                                    }
+                                    UIKitAudioArmMachine.getInstance().stopRecord();
+                                    break;
+                            }
+                        }
+                    }
+                }
                 return true;
             }
         });
@@ -239,6 +356,7 @@ public class ChatLayout extends LinearLayout {
         etMsg.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                v.onTouchEvent(event);
                 if (onListener != null) onListener.onEditTextToucn(etMsg, event);
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (bottomView != null && bottomView.getVisibility() != GONE) {
@@ -253,7 +371,7 @@ public class ChatLayout extends LinearLayout {
                         }
                     }, 250); // 延迟一段时间，等待输入法完全弹出
                 }
-                return false;
+                return true;
             }
         });
 
@@ -285,7 +403,22 @@ public class ChatLayout extends LinearLayout {
         ivEmoji.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onListener != null) onListener.onIvEmojiClick(ivEmoji);
+                if (onListener != null) {
+                    onListener.onIvEmojiClick(ivEmoji);
+                    if (bottomView != null && fragmentManager != null) {
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        if (moreFragment != null) {
+//                            if (!moreFragment.isAdded()) transaction.add(bottomView.getId(), moreFragment);
+                            transaction.hide(moreFragment);
+                            moreFragment.setUserVisibleHint(false);
+                        }
+                        if (emojiFragment != null) {
+                            transaction.show(emojiFragment);
+                            emojiFragment.setUserVisibleHint(true);
+                        }
+                        transaction.commit();
+                    }
+                }
                 onEmoji$PlusClicked();
             }
         });
@@ -302,13 +435,60 @@ public class ChatLayout extends LinearLayout {
         ivSendPlus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onListener != null) onListener.onIvPlusClick(ivSendPlus);
+                if (onListener != null) {
+                    onListener.onIvPlusClick(ivSendPlus);
+                    if (bottomView != null && fragmentManager != null) {
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        if (emojiFragment != null) {
+                            transaction.hide(emojiFragment);
+                            emojiFragment.setUserVisibleHint(false);//fragment.onHiddenChanged
+                        }
+                        if (moreFragment != null) {
+                            transaction.show(moreFragment);
+                            moreFragment.setUserVisibleHint(true);
+                        }
+                        transaction.commit();
+                    }
+                }
                 onEmoji$PlusClicked();
             }
         });
 
         if(!isInEditMode()){//造成错误的代码段
         }
+    }
+
+    //检查权限, 返回是否有权限
+    public boolean checkStoragePermisson(String permisson) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permission = ActivityCompat.checkSelfPermission(getContext(), permisson);
+            return PackageManager.PERMISSION_GRANTED == permission;
+        }
+        return true;
+    }
+    //显示没有权限的对话框, 跳转设置界面
+    public void showPermissionDialog() {
+        if (mPermissionDialog == null) {
+            mPermissionDialog = new AlertDialog.Builder(getContext())
+                    .setMessage("使用该功能，需要开启权限，鉴于您禁用相关权限，请手动设置开启权限")
+                    .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            Uri packageURI = Uri.parse("package:".concat(getContext().getPackageName()));
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageURI);
+                            getContext().startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .create();
+        }
+        mPermissionDialog.show();
     }
 
     //当键盘 or 表情 or Plus按钮点击的时候
@@ -469,5 +649,7 @@ public class ChatLayout extends LinearLayout {
             }
             keyboardOnGlobalChangeListener = null;
         }
+        UIKitAudioArmMachine.getInstance().stopRecord();
+        UIKitAudioArmMachine.getInstance().stopPlayRecord();
     }
 }

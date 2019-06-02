@@ -1,5 +1,6 @@
 package com.actor.chatlayout;
 
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +20,24 @@ public abstract class OnListener {
      * 左侧语音按钮点击事件,一般不用重写此方法监听
      */
     public void onIvVoiceClick(ImageView ivVoice){}
+
+    /**
+     * 没有录音等权限
+     */
+    public void onNoPermission(String permission) {}
+
+    /**
+     * 语音录制完成
+     * @param audioPath 语音路径, 已判空
+     * @param durationMs 语音时长, 单位ms
+     */
+    public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs){}
+
+    /**
+     * 录音失败
+     */
+    public void onVoiceRecordError(Exception e) {
+    }
 
     /**
      * 左侧键盘按钮点击事件,一般不用重写此方法监听
@@ -48,12 +67,12 @@ public abstract class OnListener {
     public void onTvPressSpeakTouch(TextView tvPressSpeak, MotionEvent event) {}
 
     /**
-     * 右边⊕或ⓧ号点击事件,一般不用重写此方法监听
+     * 右边⊕或ⓧ号点击事件
      */
     public void onIvPlusClick(ImageView ivPlus) {}
 
     /**
-     * 表情的ImageView按钮,一般不用重写此方法监听
+     * 表情的ImageView按钮
      */
     public void onIvEmojiClick(ImageView ivEmoji) {}
 
