@@ -70,13 +70,18 @@ public class UIKitAudioArmMachine {
 
     /**
      * 结束录音
+     * @param isCanceled 是否已经取消录音(比如按住时 上滑取消)
      */
-    public void stopRecord() {
+    public void stopRecord(boolean isCanceled) {
         synchronized (recording) {
             if (recording) {
                 recording = false;
                 endTime = System.currentTimeMillis();
-                if (mRecordCallback != null) mRecordCallback.recordComplete(endTime - startTime);
+                if (mRecordCallback != null) {
+                    if (isCanceled) {
+                        mRecordCallback.recordCancel(getRecordAudioPath(), endTime - startTime);//子线程
+                    } else mRecordCallback.recordComplete(getRecordAudioPath(), endTime - startTime);//子线程
+                }
                 if (mRecorder != null && innerRecording) {
                     try {
                         innerRecording = false;
@@ -123,7 +128,13 @@ public class UIKitAudioArmMachine {
     }
 
     public interface AudioRecordCallback {
-        void recordComplete(long duration);
+        /**
+         * 录制完成
+         * @param audioPath 语音路径
+         * @param durationMs 语音时长, 单位ms
+         */
+        void recordComplete(String audioPath, long durationMs);
+        void recordCancel(String audioPath, long durationMs);//取消录音
         void recordError(Exception e);//录音失败
     }
 
@@ -142,7 +153,7 @@ public class UIKitAudioArmMachine {
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 //RAW_AMR虽然被高版本废弃，但它兼容低版本还是可以用的
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
-                recordAudioPath = CURRENT_RECORD_FILE + System.currentTimeMillis();
+                recordAudioPath = CURRENT_RECORD_FILE + System.currentTimeMillis() + ".amr";
                 mRecorder.setOutputFile(recordAudioPath);
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
                 startTime = System.currentTimeMillis();
@@ -163,7 +174,7 @@ public class UIKitAudioArmMachine {
                             }
                             //TencentImUtils.getBaseConfigs().getAudioRecordMaxTime() * 1000
                             if (System.currentTimeMillis() - startTime >= maxRecordTime) {
-                                stopRecord();
+                                stopRecord(false);
                                 return;
                             }
                         }

@@ -1,4 +1,4 @@
-package com.actor.chatlayout;
+package com.actor.chatlayout.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,7 +12,17 @@ import android.os.Parcelable;
 public class ItemMore implements Parcelable {
 
     public int itemIcon;
+    public String itemIconUrl;
     public String itemText;
+
+    /**
+     * @param itemIconUrl 图标地址
+     * @param itemText 文字
+     */
+    public ItemMore(String itemIconUrl, String itemText) {
+        this.itemIconUrl = itemIconUrl;
+        this.itemText = itemText;
+    }
 
     /**
      * @param itemIcon 图标
@@ -23,15 +33,10 @@ public class ItemMore implements Parcelable {
         this.itemText = itemText;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(itemIcon);
-        dest.writeString(itemText);
+    protected ItemMore(Parcel in) {
+        itemIcon = in.readInt();
+        itemIconUrl = in.readString();
+        itemText = in.readString();
     }
 
     public static final Creator<ItemMore> CREATOR = new Creator<ItemMore>() {
@@ -46,8 +51,15 @@ public class ItemMore implements Parcelable {
         }
     };
 
-    protected ItemMore(Parcel in) {
-        itemIcon = in.readInt();
-        itemText = in.readString();
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(itemIcon);
+        dest.writeString(itemIconUrl);
+        dest.writeString(itemText);
     }
 }

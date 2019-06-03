@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actor.chatlayout.ItemMore;
+import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.R;
 import com.actor.chatlayout.RVItemDecoration;
 

@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
@@ -15,13 +14,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +34,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.actor.chatlayout.bean.Emoji;
+import com.actor.chatlayout.fragment.EmojiFragment;
+import com.actor.chatlayout.fragment.MoreFragment;
+import com.actor.chatlayout.utils.FaceManager;
+import com.actor.chatlayout.utils.KeyboardUtils;
 
 /**
  * <ul>
@@ -86,8 +92,9 @@ public class ChatLayout extends LinearLayout {
     private boolean           audioRecordIsCancel;//语音录制是否已取消
     private float             startRecordY;//按下时的y坐标
     private AlertDialog       mPermissionDialog;
-    private FragmentManager fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
-    private Fragment emojiFragment, moreFragment;
+    private FragmentManager   fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
+    private EmojiFragment     emojiFragment;
+    private MoreFragment moreFragment;
 
     public ChatLayout(Context context) {
         this(context, null);
@@ -160,11 +167,12 @@ public class ChatLayout extends LinearLayout {
         if (bottomView != null) {
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                     | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-            int keyboardHeight = getKeyboardHeight(831);
+            int keyboardHeight = KeyboardUtils.getKeyboardHeight();
             if (keyboardHeight > 0) {
                 ViewGroup.LayoutParams params = bottomView.getLayoutParams();//设置高度和键盘高度一致
                 params.height = keyboardHeight;
                 bottomView.setLayoutParams(params);
+                bottomView.setVisibility(GONE);
             }
         }
         if (voiceRecorderView != null) voiceRecorderView.setVisibility(GONE);
@@ -177,22 +185,45 @@ public class ChatLayout extends LinearLayout {
      * @param emojiFragment
      * @param moreFragment
      */
-    public void setBottomFragments(FragmentManager fragmentManager, Fragment emojiFragment, Fragment moreFragment) {
+    public void setBottomFragments(FragmentManager fragmentManager, EmojiFragment emojiFragment, MoreFragment moreFragment) {
         this.fragmentManager = fragmentManager;
         this.emojiFragment = emojiFragment;
         this.moreFragment = moreFragment;
-        if (bottomView != null && fragmentManager != null) {
-            FragmentTransaction fragmentTransaction = this.fragmentManager.beginTransaction();
-            if (this.emojiFragment != null) {
-                fragmentTransaction.add(bottomView.getId(), this.emojiFragment)
-                        .hide(this.emojiFragment);
+
+        this.emojiFragment.setListener(new EmojiFragment.OnEmojiClickListener() {
+            @Override
+            public void onEmojiDelete() {
+                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                etMsg.dispatchKeyEvent(event);
             }
-            if (this.moreFragment != null) {
-                fragmentTransaction.add(bottomView.getId(), this.moreFragment)
-                        .hide(this.moreFragment);
+
+            @Override
+            public void onEmojiClick(Emoji emoji) {
+                int index = etMsg.getSelectionStart();
+                Editable editable = etMsg.getText();
+                editable.insert(index, emoji.filter);
+                FaceManager.handlerEmojiText(etMsg, editable.toString());
             }
-            fragmentTransaction.commit();
-        }
+
+            @Override
+            public void onCustomFaceClick(int groupIndex, Emoji emoji) {
+                // TODO: 2019/6/3
+                Log.e(TAG, "onCustomFaceClick: 自定义表情, 还未实现");
+            }
+        });
+
+//        if (bottomView != null && fragmentManager != null) {
+//            FragmentTransaction fragmentTransaction = this.fragmentManager.beginTransaction();
+//            if (this.emojiFragment != null) {
+//                fragmentTransaction.add(bottomView.getId(), this.emojiFragment)
+//                        .hide(this.emojiFragment);
+//            }
+//            if (this.moreFragment != null) {
+//                fragmentTransaction.add(bottomView.getId(), this.moreFragment)
+//                        .hide(this.moreFragment);
+//            }
+//            fragmentTransaction.commit();
+//        }
     }
 
     private Rect rect = new Rect();
@@ -208,7 +239,7 @@ public class ChatLayout extends LinearLayout {
             boolean isActive = false;
             if (Math.abs(keyboardHeight) > 500) {//手写:478 语音:477 26键:831.screenHeight / 5
                 isActive = true; // 超过屏幕五分之一则表示弹出了输入法
-                saveKeyboardHeight(keyboardHeight);
+                KeyboardUtils.saveKeyboardHeight(keyboardHeight);
             }
             isKeyboardActive = isActive;
             if (isKeyboardActive) {
@@ -298,13 +329,15 @@ public class ChatLayout extends LinearLayout {
                                     startRecordY = event.getY();
                                     voiceRecorderView.startRecording();
                                     UIKitAudioArmMachine.getInstance().startRecord(new UIKitAudioArmMachine.AudioRecordCallback() {
+
                                         @Override
-                                        public void recordComplete(long duration) {
+                                        public void recordComplete(String audioPath,
+                                                                   long durationMs) {
                                             if (audioRecordIsCancel) {
                                                 voiceRecorderView.stopRecording();
                                                 return;
                                             }
-                                            if (duration < 500) {
+                                            if (durationMs < 500) {
                                                 voiceRecorderView.tooShortRecording();
                                                 return;
                                             }
@@ -312,7 +345,12 @@ public class ChatLayout extends LinearLayout {
                                             String recordAudioPath =//语音路径
                                                     UIKitAudioArmMachine.getInstance().getRecordAudioPath();
                                             if (!TextUtils.isEmpty(recordAudioPath))
-                                            onListener.onVoiceRecordSuccess(recordAudioPath, duration);
+                                                onListener.onVoiceRecordSuccess(recordAudioPath, durationMs);
+                                        }
+
+                                        @Override
+                                        public void recordCancel(String audioPath, long durationMs) {
+                                            voiceRecorderView.stopRecording();
                                         }
 
                                         @Override
@@ -342,7 +380,7 @@ public class ChatLayout extends LinearLayout {
 //                                    } else {
 //                                        audioRecordIsCancel = false;
 //                                    }
-                                    UIKitAudioArmMachine.getInstance().stopRecord();
+                                    UIKitAudioArmMachine.getInstance().stopRecord(audioRecordIsCancel);
                                     break;
                             }
                         }
@@ -409,10 +447,13 @@ public class ChatLayout extends LinearLayout {
                         FragmentTransaction transaction = fragmentManager.beginTransaction();
                         if (moreFragment != null) {
 //                            if (!moreFragment.isAdded()) transaction.add(bottomView.getId(), moreFragment);
-                            transaction.hide(moreFragment);
-                            moreFragment.setUserVisibleHint(false);
+                            if (moreFragment.isAdded() && !moreFragment.isHidden()) {
+                                transaction.hide(moreFragment);
+                                moreFragment.setUserVisibleHint(false);
+                            }
                         }
                         if (emojiFragment != null) {
+                            if (!emojiFragment.isAdded()) transaction.add(bottomView.getId(), emojiFragment);
                             transaction.show(emojiFragment);
                             emojiFragment.setUserVisibleHint(true);
                         }
@@ -440,10 +481,13 @@ public class ChatLayout extends LinearLayout {
                     if (bottomView != null && fragmentManager != null) {
                         FragmentTransaction transaction = fragmentManager.beginTransaction();
                         if (emojiFragment != null) {
-                            transaction.hide(emojiFragment);
-                            emojiFragment.setUserVisibleHint(false);//fragment.onHiddenChanged
+                            if (emojiFragment.isAdded() && !emojiFragment.isHidden()) {
+                                transaction.hide(emojiFragment);
+                                emojiFragment.setUserVisibleHint(false);//fragment.onHiddenChanged
+                            }
                         }
                         if (moreFragment != null) {
+                            if (!moreFragment.isAdded()) transaction.add(bottomView.getId(), moreFragment);
                             transaction.show(moreFragment);
                             moreFragment.setUserVisibleHint(true);
                         }
@@ -625,17 +669,6 @@ public class ChatLayout extends LinearLayout {
         return getContext().getResources().getDisplayMetrics().heightPixels;
     }
 
-    private static final String KEYBOARD_HEIGHT = "KEYBOARD_HEIGHT_KEYBOARD_HEIGHT";//键盘高度
-    private int getKeyboardHeight(int defValue){
-        SharedPreferences sp = getContext().getSharedPreferences(KEYBOARD_HEIGHT, Context.MODE_PRIVATE);
-        return sp.getInt(KEYBOARD_HEIGHT, defValue);
-    }
-
-    private void saveKeyboardHeight(int value){
-        SharedPreferences sp = getContext().getSharedPreferences(KEYBOARD_HEIGHT, Context.MODE_PRIVATE);
-        sp.edit().putInt(KEYBOARD_HEIGHT, value).apply();
-    }
-
     private void setSoftInputMode(int mode) {
         ((Activity) getContext()).getWindow().setSoftInputMode(mode);
     }
@@ -649,7 +682,7 @@ public class ChatLayout extends LinearLayout {
             }
             keyboardOnGlobalChangeListener = null;
         }
-        UIKitAudioArmMachine.getInstance().stopRecord();
+        UIKitAudioArmMachine.getInstance().stopRecord(true);
         UIKitAudioArmMachine.getInstance().stopPlayRecord();
     }
 }

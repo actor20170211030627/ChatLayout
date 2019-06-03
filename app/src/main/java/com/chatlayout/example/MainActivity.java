@@ -14,9 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actor.chatlayout.ChatLayout;
-import com.actor.chatlayout.ItemMore;
+import com.actor.chatlayout.ChatLayoutKit;
 import com.actor.chatlayout.OnListener;
 import com.actor.chatlayout.VoiceRecorderView;
+import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.fragment.EmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.chatlayout.example.statusbar.StatusBarCompat;
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.colorPrimary), 40);
         setContentView(R.layout.activity_main);
+
+        ChatLayoutKit.init(getApplicationContext());//初始化
+
         rvRecyclerview = findViewById(R.id.rv_recyclerview);
         voiceRecorder = findViewById(R.id.voice_recorder);
         clChatLayout = findViewById(R.id.cl_chatLayout);
@@ -61,6 +65,14 @@ public class MainActivity extends AppCompatActivity  {
 
         clChatLayout.init(rvRecyclerview, fl_bottom, voiceRecorder);//rvBottom
 
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        EmojiFragment emojiFragment = new EmojiFragment();
+
         MoreFragment moreFragment = MoreFragment.newInstance(4, 50, bottomViewDatas);
         moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {
             @Override
@@ -68,7 +80,7 @@ public class MainActivity extends AppCompatActivity  {
 
             }
         });
-        clChatLayout.setBottomFragments(getSupportFragmentManager(), new EmojiFragment(), moreFragment);
+        clChatLayout.setBottomFragments(getSupportFragmentManager(), emojiFragment, moreFragment);
         /**
          * 可重写其它方法,详情点击{@link OnListener}
          */
