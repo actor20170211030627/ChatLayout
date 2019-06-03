@@ -684,5 +684,11 @@ public class ChatLayout extends LinearLayout {
         }
         UIKitAudioArmMachine.getInstance().stopRecord(true);
         UIKitAudioArmMachine.getInstance().stopPlayRecord();
+        if (fragmentManager != null && bottomView != null) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if (emojiFragment != null && emojiFragment.isAdded()) transaction.remove(emojiFragment);
+            if (moreFragment != null && moreFragment.isAdded()) transaction.remove(moreFragment);
+            transaction.commit();
+        }
     }
 }
