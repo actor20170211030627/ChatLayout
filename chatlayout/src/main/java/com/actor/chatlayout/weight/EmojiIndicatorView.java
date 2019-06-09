@@ -29,11 +29,15 @@ public class EmojiIndicatorView extends LinearLayout {
     private ArrayList<ImageView> mImageViews;
     private Bitmap               bmpSelect;
     private Bitmap               bmpNomal;
-    private int                  mHeight = 16;
+    private int                  mHeight = 10;
     private int                  mMaxHeight;
     private AnimatorSet          mPlayToAnimatorSet;
     private AnimatorSet          mPlayByInAnimatorSet;
     private AnimatorSet          mPlayByOutAnimatorSet;
+
+    public EmojiIndicatorView(Context context) {
+        this(context, null);
+    }
 
     public EmojiIndicatorView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,10 +46,6 @@ public class EmojiIndicatorView extends LinearLayout {
         mMaxHeight = ConverUtils.dp2px(mHeight);
         bmpSelect = BitmapFactory.decodeResource(getResources(), R.drawable.indicator_point_select);
         bmpNomal = BitmapFactory.decodeResource(getResources(), R.drawable.indicator_point_nomal);
-    }
-
-    public EmojiIndicatorView(Context context) {
-        this(context, null);
     }
 
     public void init(int count) {
@@ -62,6 +62,7 @@ public class EmojiIndicatorView extends LinearLayout {
                 rl.addView(imageView, layoutParams);
             } else {
                 imageView.setImageBitmap(bmpNomal);
+                params.leftMargin = mMaxHeight / 2;
                 rl.addView(imageView, layoutParams);
             }
             this.addView(rl, params);

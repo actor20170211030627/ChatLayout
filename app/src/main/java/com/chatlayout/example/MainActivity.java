@@ -20,6 +20,7 @@ import com.actor.chatlayout.VoiceRecorderView;
 import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.fragment.EmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
+import com.actor.chatlayout.utils.FaceManager;
 import com.chatlayout.example.statusbar.StatusBarCompat;
 
 import java.util.ArrayList;
@@ -74,10 +75,10 @@ public class MainActivity extends AppCompatActivity  {
         EmojiFragment emojiFragment = new EmojiFragment();
 
         MoreFragment moreFragment = MoreFragment.newInstance(4, 50, bottomViewDatas);
-        moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {
+        moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {//更多点击
             @Override
             public void onItemClick(int position, ItemMore itemMore) {
-
+                toast(itemMore.itemText);
             }
         });
         clChatLayout.setBottomFragments(getSupportFragmentManager(), emojiFragment, moreFragment);
@@ -148,7 +149,8 @@ public class MainActivity extends AppCompatActivity  {
 
         @Override
         public void onBindViewHolder(ChatListViewHolder holder, int position) {
-            holder.tv.setText(items.get(position));
+            FaceManager.handlerEmojiText(holder.tv, items.get(position));
+//            holder.tv.setText(items.get(position));
             holder.tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

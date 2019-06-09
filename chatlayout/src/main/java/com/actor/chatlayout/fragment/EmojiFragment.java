@@ -254,17 +254,13 @@ public class EmojiFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mCurrentGroupIndex > 0) {
-                    listener.onCustomFaceClick(mCurrentGroupIndex, subList.get(position));
+                    if (listener != null) listener.onCustomFaceClick(mCurrentGroupIndex, subList.get(position));
                 } else {
                     if (position == columns * rows - 1) {
-                        if (listener != null) {
-                            listener.onEmojiDelete();
-                        }
+                        if (listener != null) listener.onEmojiDelete();
                         return;
                     }
-                    if (listener != null) {
-                        listener.onEmojiClick(subList.get(position));
-                    }
+                    if (listener != null) listener.onEmojiClick(subList.get(position));
                 }
 
 
@@ -396,5 +392,15 @@ public class EmojiFragment extends Fragment {
         void onEmojiClick(Emoji emoji);
 
         void onCustomFaceClick(int groupIndex, Emoji emoji);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (emojiList != null) emojiList.clear();
+        if (recentlyEmojiList != null) recentlyEmojiList.clear();
+        if (ViewPagerItems != null) ViewPagerItems.clear();
+        if (customFaces != null) customFaces.clear();
+        listener = null;
     }
 }
