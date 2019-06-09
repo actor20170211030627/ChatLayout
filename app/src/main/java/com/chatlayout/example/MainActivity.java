@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actor.chatlayout.ChatLayout;
-import com.actor.chatlayout.ChatLayoutKit;
 import com.actor.chatlayout.OnListener;
 import com.actor.chatlayout.VoiceRecorderView;
 import com.actor.chatlayout.bean.ItemMore;
@@ -46,8 +45,6 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.colorPrimary), 40);
         setContentView(R.layout.activity_main);
-
-        ChatLayoutKit.init(getApplicationContext());//初始化
 
         rvRecyclerview = findViewById(R.id.rv_recyclerview);
         voiceRecorder = findViewById(R.id.voice_recorder);

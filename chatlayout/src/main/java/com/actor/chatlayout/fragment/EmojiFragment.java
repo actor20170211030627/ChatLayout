@@ -397,10 +397,11 @@ public class EmojiFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (emojiList != null) emojiList.clear();
-        if (recentlyEmojiList != null) recentlyEmojiList.clear();
+        emojiList = null;
+        recentlyEmojiList = null;
         if (ViewPagerItems != null) ViewPagerItems.clear();
-        if (customFaces != null) customFaces.clear();
+        ViewPagerItems = null;
+        customFaces = null;
         listener = null;
     }
 }
