@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:overScrollMode="never"
     android:padding="20dp"
     app:layoutManager="android.support.v7.widget.GridLayoutManager"
     app:spanCount="4"
