@@ -190,27 +190,29 @@ public class ChatLayout extends LinearLayout {
         this.emojiFragment = emojiFragment;
         this.moreFragment = moreFragment;
 
-        this.emojiFragment.setListener(new EmojiFragment.OnEmojiClickListener() {
-            @Override
-            public void onEmojiDelete() {
-                KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-                etMsg.dispatchKeyEvent(event);
-            }
+        if (emojiFragment != null) {
+            this.emojiFragment.setListener(new EmojiFragment.OnEmojiClickListener() {
+                @Override
+                public void onEmojiDelete() {
+                    KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                    etMsg.dispatchKeyEvent(event);
+                }
 
-            @Override
-            public void onEmojiClick(Emoji emoji) {
-                int index = etMsg.getSelectionStart();
-                Editable editable = etMsg.getText();
-                editable.insert(index, emoji.filter);
-                FaceManager.handlerEmojiText(etMsg, editable.toString());
-            }
+                @Override
+                public void onEmojiClick(Emoji emoji) {
+                    int index = etMsg.getSelectionStart();
+                    Editable editable = etMsg.getText();
+                    editable.insert(index, emoji.filter);
+                    FaceManager.handlerEmojiText(etMsg, editable.toString());
+                }
 
-            @Override
-            public void onCustomFaceClick(int groupIndex, Emoji emoji) {
-                // TODO: 2019/6/3
-                Log.e(TAG, "onCustomFaceClick: 自定义表情, 还未实现");
-            }
-        });
+                @Override
+                public void onCustomFaceClick(int groupIndex, Emoji emoji) {
+                    // TODO: 2019/6/3
+                    Log.e(TAG, "onCustomFaceClick: 自定义表情, 还未实现");
+                }
+            });
+        }
 
 //        if (bottomView != null && fragmentManager != null) {
 //            FragmentTransaction fragmentTransaction = this.fragmentManager.beginTransaction();
@@ -675,7 +677,6 @@ public class ChatLayout extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
         if (keyboardOnGlobalChangeListener != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 getViewTreeObserver().removeOnGlobalLayoutListener(keyboardOnGlobalChangeListener);
@@ -688,7 +689,13 @@ public class ChatLayout extends LinearLayout {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             if (emojiFragment != null && emojiFragment.isAdded()) transaction.remove(emojiFragment);
             if (moreFragment != null && moreFragment.isAdded()) transaction.remove(moreFragment);
-            transaction.commit();
+            //https://www.jianshu.com/p/05f36f2fa618
+            //java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState
+            transaction.commitAllowingStateLoss();//commit()
+            emojiFragment = null;
+            moreFragment = null;
+            fragmentManager = null;
         }
+        super.onDetachedFromWindow();
     }
 }
