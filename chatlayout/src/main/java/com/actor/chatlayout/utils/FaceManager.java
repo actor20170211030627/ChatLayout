@@ -183,6 +183,7 @@ public class FaceManager {
      * @param content
      */
     public static void handlerEmojiText(TextView comment, String content) {
+        if(comment == null || content == null) return;
         SpannableStringBuilder sb = new SpannableStringBuilder(content);
         String regex = "\\[(\\S+?)\\]";
         Pattern p = Pattern.compile(regex);
