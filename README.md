@@ -1,8 +1,6 @@
 # ChatLayout
 聊天界面按钮的简单封装...
 
-[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
-[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## Screenshot
@@ -111,5 +109,4 @@ Add it in your root build.gradle at the end of repositories:
 <a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a>
 
 ## License
-[996.ICU](https://github.com/996icu/996.ICU/blob/master/LICENSE "996.ICU")
- and Apache 2.0.
+ Apache 2.0.
