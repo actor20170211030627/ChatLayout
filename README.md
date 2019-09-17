@@ -16,20 +16,20 @@
 
 ## Usage
 <ol>
-	<li> in xml
-	<pre>
-		< com.actor.chatlayout.ChatLayout
-		    android:id="@+id/cl_chatLayout"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
+    <li> in xml
+    <pre>
+        < com.actor.chatlayout.ChatLayout
+            android:id="@+id/cl_chatLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:clBtnSendBackground=""      //"发送"按钮背景(btnSend) color/drawable/selector(默认有一个蓝色selector)
-		    app:clIvEmojiVisiable="true"	//表情(Emoji) Visiable(true default)
-		    app:clIvPlusVisiable="true"		//右侧⊕号(Plus) Visiable(true default)
-		    app:clIvVoiceVisiable="true">	//语音(Voice) Visiable(true default)
-		< /com.actor.chatlayout.ChatLayout>
-	</pre>
-	</li>
-	<li>in activity
+            app:clIvEmojiVisiable="true"	//表情(Emoji) Visiable(true default)
+            app:clIvPlusVisiable="true"		//右侧⊕号(Plus) Visiable(true default)
+            app:clIvVoiceVisiable="true">	//语音(Voice) Visiable(true default)
+        < /com.actor.chatlayout.ChatLayout>
+    </pre>
+    </li>
+    <li>in activity
 <pre>
     private RecyclerView rvRecyclerview;//chat list(这是上面的聊天列表)
     private ChatLayout clChatLayout;
@@ -91,21 +91,21 @@ To get a Git project into your build:
 
 Add it in your root build.gradle at the end of repositories:
 <pre>
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+    allprojects {
+        repositories {
+            ...
+            maven { url 'https://jitpack.io' }
+        }
+    }
 </pre>
 
 
 **Step 2.** Add the dependency, the last version:
 [![](https://jitpack.io/v/actor20170211030627/ChatLayout.svg)](https://jitpack.io/#actor20170211030627/ChatLayout)
 
-	dependencies {
-	        implementation 'com.github.actor20170211030627:ChatLayout:version'
-	}
+    dependencies {
+            implementation 'com.github.actor20170211030627:ChatLayout:version'
+    }
 
 ## Thanks
 <a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a>
