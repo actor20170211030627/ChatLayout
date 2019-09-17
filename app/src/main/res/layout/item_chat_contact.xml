@@ -11,9 +11,9 @@
         android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/blue_2EABFB"
+        android:background="@color/blue_2EABFB_for_chat_layout"
         android:padding="6dp"
-        android:textColor="@color/white"
+        android:textColor="@color/white_for_chat_layout"
         tools:text="Hello World!"/>
 
     <ImageView

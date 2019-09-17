@@ -11,7 +11,8 @@
 <img src="captures/example.gif" width=35%></img>
 
 ## Demo
-<a href="https://github.com/actor20170211030627/ChatLayout/raw/master/captures/app-debug.apk">download apk</a>
+<a href="https://github.com/actor20170211030627/ChatLayout/raw/master/app/build/outputs/apk/debug/app-debug.apk">download apk</a> or scan qrcode:  <br/>
+<img src="captures/qrcode.png" width=35%></img>
 
 ## Usage
 <ol>
@@ -21,6 +22,7 @@
 		    android:id="@+id/cl_chatLayout"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
+            app:clBtnSendBackground=""      //"发送"按钮背景(btnSend) color/drawable/selector(默认有一个蓝色selector)
 		    app:clIvEmojiVisiable="true"	//表情(Emoji) Visiable(true default)
 		    app:clIvPlusVisiable="true"		//右侧⊕号(Plus) Visiable(true default)
 		    app:clIvVoiceVisiable="true">	//语音(Voice) Visiable(true default)

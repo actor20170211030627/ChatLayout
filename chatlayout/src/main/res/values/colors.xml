@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_4597D8">#4597D8</color>
-    <color name="blue_2EABFB">#2EABFB</color>
-    <color name="white">#fff</color>
+    <color name="blue_4597D8_for_chat_layout">#4597D8</color>
+    <color name="blue_2EABFB_for_chat_layout">#2EABFB</color>
+    <color name="white_for_chat_layout">#fff</color>
 
-    <color name="gray_e0e0e0">#e0e0e0</color>
-    <color name="gray_929292">#929292</color>
-    <color name="gray_normal_6f7378">#6f7378</color>
-    <color name="gray_pressed_64686c">#64686c</color>
-    <color name="gray_pressed_light_dcdcdc">#dcdcdc</color>
+    <color name="gray_dcdcdc_for_chat_layout">#dcdcdc</color>
+    <color name="gray_6f7378_for_chat_layout">#6f7378</color>
+    <color name="gray_64686c_for_chat_layout">#64686c</color>
 </resources>

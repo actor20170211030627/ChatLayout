@@ -35,9 +35,6 @@ public class MoreFragment extends Fragment {
     private             RecyclerView        recyclerView;
     private             MoreAdapter         moreAdapter;
 
-    public MoreFragment() {
-    }
-
     /**
      * 官方获取实例
      * @param spanCount recyclerview 行数, 一般4行
@@ -58,10 +55,11 @@ public class MoreFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {//官方获取参数
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            spanCount = getArguments().getInt(SPAN_COUNT);
-            itemDecorationPx = getArguments().getInt(ITEM_DECORATION);
-            items = getArguments().getParcelableArrayList(ITEMS);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            spanCount = arguments.getInt(SPAN_COUNT);
+            itemDecorationPx = arguments.getInt(ITEM_DECORATION);
+            items = arguments.getParcelableArrayList(ITEMS);
         }
     }
 

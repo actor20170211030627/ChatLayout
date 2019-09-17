@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +19,6 @@ import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.fragment.EmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.chatlayout.utils.FaceManager;
-import com.chatlayout.example.statusbar.StatusBarCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,29 +26,24 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity  {
 
-    private static final String TAG = "MainActivity";
-
     private RecyclerView      rvRecyclerview;
     private VoiceRecorderView voiceRecorder;
     private ChatLayout        clChatLayout;
-    private RecyclerView      rvBottom;
-    private FrameLayout       fl_bottom;
+//    private FrameLayout       fl_bottom;
 
     private ChatListAdapter      chatListAdapter;
     private List<String>         items           = new ArrayList<>();
-    private ArrayList<ItemMore> bottomViewDatas = new ArrayList<>();
+    private ArrayList<ItemMore>  bottomViewDatas = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarCompat.setStatusBarColor(this, getResources().getColor(R.color.colorPrimary), 40);
         setContentView(R.layout.activity_main);
 
         rvRecyclerview = findViewById(R.id.rv_recyclerview);
         voiceRecorder = findViewById(R.id.voice_recorder);
         clChatLayout = findViewById(R.id.cl_chatLayout);
-//        rvBottom = findViewById(R.id.rv_bottom);
-        fl_bottom = findViewById(R.id.fl_bottom);
+//        fl_bottom = findViewById(R.id.fl_bottom);
 
         for (int i = 0; i < 20; i++) {
             items.add("Hello World!    " + i);
@@ -61,13 +54,7 @@ public class MainActivity extends AppCompatActivity  {
             bottomViewDatas.add(new ItemMore(imgRes, "Item" + i));
         }
 
-        clChatLayout.init(rvRecyclerview, fl_bottom, voiceRecorder);//rvBottom
-
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        clChatLayout.init(rvRecyclerview/*, null*/, voiceRecorder);//rvBottom
 
         EmojiFragment emojiFragment = new EmojiFragment();
 

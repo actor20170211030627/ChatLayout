@@ -14,7 +14,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        ChatLayoutKit.init(getApplicationContext());//初始化
+        ChatLayoutKit.init(getApplication());//初始化
 
         findViewById(R.id.btn_login).setOnClickListener(new View.OnClickListener() {
             @Override

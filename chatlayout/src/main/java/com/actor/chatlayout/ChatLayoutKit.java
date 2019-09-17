@@ -1,5 +1,6 @@
 package com.actor.chatlayout;
 
+import android.app.Application;
 import android.content.Context;
 
 import com.actor.chatlayout.utils.FaceManager;
@@ -13,17 +14,17 @@ import com.actor.chatlayout.utils.FaceManager;
  */
 public class ChatLayoutKit {
 
-    private static Context context;
+    private static Application application;
 
     /**
      * 传入ApplicationContext
      */
-    public static void init(Context context) {
-        ChatLayoutKit.context = context;
+    public static void init(Application application) {
+        ChatLayoutKit.application = application;
         FaceManager.loadFaceFiles(null);
     }
 
     public static Context getContext() {
-        return context;
+        return application;
     }
 }

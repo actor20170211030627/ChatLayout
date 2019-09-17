@@ -10,12 +10,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -68,7 +70,7 @@ import com.actor.chatlayout.utils.KeyboardUtils;
 public class ChatLayout extends LinearLayout {
 
     private static final String TAG = ChatLayout.class.getName();
-    private View listView;//上面列表View
+    private RecyclerView recyclerView;//上面列表RecyclerView
     private ImageView ivVoice;
     private ImageView ivKeyboard;
     private EditText etMsg;
@@ -106,7 +108,6 @@ public class ChatLayout extends LinearLayout {
 
     public ChatLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         /**
          * 给当前空的布局填充内容
@@ -114,26 +115,28 @@ public class ChatLayout extends LinearLayout {
          * 传null表示当前布局没有父控件,大部分都传null
          * 传this表示已当前相对布局为这个布局的父控件,这样做了以后,当前空的布局就有内容了
          */
-        //1.给SettingItemView(RelatuveLayout)填充布局
-        View inflate = View.inflate(context, R.layout.layout_center_buttons, this);
-        ivVoice = inflate.findViewById(R.id.iv_voice);
-        ivKeyboard = inflate.findViewById(R.id.iv_keyboard);
-        etMsg = inflate.findViewById(R.id.et_msg);
-        tvPressSpeak = inflate.findViewById(R.id.tv_press_speak);
-        ivEmoji = inflate.findViewById(R.id.iv_emoji);
-        flParent = inflate.findViewById(R.id.fl_parent);
-        btnSend = inflate.findViewById(R.id.btn_send);
-        ivSendPlus = inflate.findViewById(R.id.iv_sendplus);
+        View inflate = View.inflate(context, R.layout.layout_for_chat_layout, this);
+        ivVoice = inflate.findViewById(R.id.iv_voice_for_chat_layout);
+        ivKeyboard = inflate.findViewById(R.id.iv_keyboard_for_chat_layout);
+        etMsg = inflate.findViewById(R.id.et_msg_for_chat_layout);
+        tvPressSpeak = inflate.findViewById(R.id.tv_press_speak_for_chat_layout);
+        ivEmoji = inflate.findViewById(R.id.iv_emoji_for_chat_layout);
+        flParent = inflate.findViewById(R.id.fl_send_plus_for_chat_layout);
+        btnSend = inflate.findViewById(R.id.btn_send_for_chat_layout);
+        ivSendPlus = inflate.findViewById(R.id.iv_sendplus_for_chat_layout);
+        bottomView = inflate.findViewById(R.id.fl_bottom_for_chat_layout);
         if (attrs != null) {
-            TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.ChatLayout);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ChatLayout);
             ivVoiceVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvVoiceVisiable, true);
             ivEmojiVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvEmojiVisiable, true);
             ivPlusVisiable = typedArray.getBoolean(R.styleable.ChatLayout_clIvPlusVisiable, true);
+            Drawable background = typedArray.getDrawable(R.styleable.ChatLayout_clBtnSendBackground);
             typedArray.recycle();
             ivVoice.setVisibility(ivVoiceVisiable ? VISIBLE : GONE);//设置语音按钮是否显示
             ivEmoji.setVisibility(ivEmojiVisiable ? VISIBLE : GONE);//表情按钮是否显示
             ivSendPlus.setVisibility(ivPlusVisiable ? VISIBLE : GONE);//设置右边⊕号是否显示
             btnSend.setVisibility(ivPlusVisiable ? GONE : VISIBLE);
+            if (background != null) btnSend.setBackground(background);//背景
         }
 
         //监听布局变化
@@ -143,16 +146,16 @@ public class ChatLayout extends LinearLayout {
 
     /**
      * 初始化
-     * @param mListView 用来设置触摸事件,响应隐藏键盘
-     * @param mBottomView 用来设置和键盘一样的高度
+     * @param recyclerView 聊天列表, 用来设置触摸事件,响应隐藏键盘
+//     * @param mBottomView 用来设置和键盘一样的高度
      * @param voiceRecorderView 按住说话View
      */
-    public void init(View mListView, View mBottomView, VoiceRecorderView voiceRecorderView) {
-        this.listView = mListView;
-        this.bottomView = mBottomView;
+    public void init(RecyclerView recyclerView/*, View mBottomView*/, VoiceRecorderView voiceRecorderView) {
+        this.recyclerView = recyclerView;
+//        this.bottomView = mBottomView;
         this.voiceRecorderView = voiceRecorderView;
-        if (listView != null) {
-            listView.setOnTouchListener(new OnTouchListener() {
+        if (recyclerView != null) {
+            recyclerView.setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (onListener != null) onListener.onListViewTouchListener(v, event);

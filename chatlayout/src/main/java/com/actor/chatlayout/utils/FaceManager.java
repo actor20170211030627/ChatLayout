@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.util.LruCache;

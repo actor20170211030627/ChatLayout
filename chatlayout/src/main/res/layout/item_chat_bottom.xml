@@ -19,7 +19,7 @@
             android:background="@drawable/shape_rectangle_corners_10"
             android:padding="5dp"
             android:scaleType="fitCenter"
-            tools:src="@drawable/bg_green"/>
+            tools:src="@drawable/bg_green_for_chat_layout"/>
     </com.actor.chatlayout.weight.RatioLayout>
 
     <TextView
@@ -28,6 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:gravity="center"
-        android:textColor="@color/gray_normal_6f7378"
+        android:textColor="@color/gray_6f7378_for_chat_layout"
         tools:text="相册"/>
 </LinearLayout>
