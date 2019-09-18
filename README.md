@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## Screenshot
-#### 1.chatlayout
+#### 1.chatlayout ↓
 <img src="captures/chatlayout.png" width=35%></img>
 
 #### 2.example gif
@@ -15,73 +15,146 @@
 <img src="captures/qrcode.png" width=35%></img>
 
 ## Usage
-<ol>
-    <li> in xml
-    <pre>
-        < com.actor.chatlayout.ChatLayout
+**1.** 在Application中初始化
+
+    ChatLayoutKit.init(getApplication());//初始化
+
+**2.** 布局文件中xml
+
+    <!--1.其它布局有可能会有bug, 根部局建议用LinearLayout. (other root layout maybe bug)-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="?android:actionBarSize"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:text="Title"
+            android:textColor="@color/white_for_chat_layout"
+            android:textSize="18sp" />
+    
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+    
+            <!--2.聊天列表(Chat list)-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:stackFromEnd="true"
+                tools:listitem="@layout/item_chat_contact" />
+    
+            <!--3.按住说话(Hold To Talk)-->
+            <com.actor.chatlayout.VoiceRecorderView
+                android:id="@+id/voice_recorder"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    
+        <!--4.-->
+        <com.actor.chatlayout.ChatLayout
             android:id="@+id/cl_chatLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:clBtnSendBackground=""      //"发送"按钮背景(btnSend) color/drawable/selector(默认有一个蓝色selector)
-            app:clIvEmojiVisiable="true"	//表情(Emoji) Visiable(true default)
-            app:clIvPlusVisiable="true"		//右侧⊕号(Plus) Visiable(true default)
-            app:clIvVoiceVisiable="true">	//语音(Voice) Visiable(true default)
-        < /com.actor.chatlayout.ChatLayout>
-    </pre>
-    </li>
-    <li>in activity
-<pre>
-    private RecyclerView rvRecyclerview;//chat list(这是上面的聊天列表)
-    private ChatLayout clChatLayout;
-    private RecyclerView rvBottom;//bottom view,height=keyboard's height(这是下面的view,会动态设置和键盘一样的高度)
+            app:clBtnSendBackground=""      //发送按钮背景(Send Button's background), 默认@drawable/selector_btn_send_for_chat_layout(default)
+            app:clIvEmojiVisiable="true"    //表情图片是否显示(emoji image visiable), 默认true(default)
+            app:clIvPlusVisiable="true"     //⊕图片是否显示(⊕ image visiable), 默认true(default)
+            app:clIvVoiceVisiable="true" /> //语音图片是否显示(voice image visiable), 默认true(default)
+    </LinearLayout>
 
-    @Override
+**3.** Activity中
+
+    private RecyclerView         recyclerview;
+    private VoiceRecorderView    voiceRecorder;
+    private ChatLayout           chatLayout;
+    private ArrayList<ItemMore>  bottomViewDatas = new ArrayList<>();
+    private ChatListAdapter      chatListAdapter;
+    
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        rvRecyclerview = (RecyclerView) findViewById(R.id.rv_recyclerview);
-        clChatLayout = (ChatLayout) findViewById(R.id.cl_chatLayout);
-        rvBottom = (RecyclerView) findViewById(R.id.rv_bottom);
-
-        //1.init, nullable(初始化,可以都传null)
-        clChatLayout.init(rvRecyclerview, rvBottom);
-
-        //2.setListener,u can override other method(还有一些方法,如果需要自己重写)
-        clChatLayout.setOnListener(new OnListener() {
+        ...
+        //初始化"⊕更多"(init "more")
+        for (int i = 0; i < 8; i++) {
+            boolean flag = i % 2 == 0;
+            int imgRes = flag? R.drawable.camera : R.drawable.picture;
+            bottomViewDatas.add(new ItemMore(imgRes, "Item" + i));
+        }
+        
+        chatLayout.init(recyclerview, voiceRecorder);
+        
+        MoreFragment moreFragment = MoreFragment.newInstance(4, 50, bottomViewDatas);
+        moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {//更多点击(click ⊕)
+            @Override
+            public void onItemClick(int position, ItemMore itemMore) {
+                toast(itemMore.itemText);
+            }
+        });
+        chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
+        
+        chatLayout.setOnListener(new OnListener() {
+            
+            //点击了"发送"按钮(Send Button Click)
             @Override
             public void onBtnSendClick(EditText etMsg) {
                 String msg = etMsg.getText().toString().trim();
-                if (!TextUtils.isEmpty(msg)) {
-                    etMsg.setText("");
-                    mDatas.add(msg);
-                    chatListAdapter.notifyItemInserted(chatListAdapter.getItemCount() - 1);
-                    rvRecyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
-                }
+                toast(msg);
             }
 
+            //点击了"表情"按钮, 你可以不重写这个方法(overrideAble)
             @Override
             public void onIvEmojiClick(ImageView ivEmoji) {
                 super.onIvEmojiClick(ivEmoji);
                 toast("Emoji Click");
             }
 
+            //点击了"⊕"按钮, 你可以不重写这个方法(overrideAble)
             @Override
             public void onIvPlusClick(ImageView ivPlus) {
                 super.onIvPlusClick(ivPlus);
                 toast("Plus Click");
             }
+
+            //没语音权限, 你可以不重写这个方法(no voice record permissions, overrideAble)
+            @Override
+            public void onNoPermission(String permission) {
+                super.onNoPermission(permission);
+                //可以调用默认处理方法. 你也可以不调用这个方法, 自己处理(call default request permission method, or deal by yourself)
+                chatLayout.showPermissionDialog();
+            }
+
+            //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
+            @Override
+            public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
+                super.onVoiceRecordSuccess(audioPath, durationMs);
+                toast(String.format(Locale.getDefault(), "audioPath=%s, durationMs=%d", audioPath, durationMs));
+            }
+
+            //录音失败, 你可以不重写这个方法(voice record failure, overrideAble)
+            @Override
+            public void onVoiceRecordError(Exception e) {
+                super.onVoiceRecordError(e);
+            }
+
+            //还可重写其它方法(you can override other methods ...)
+            ...
         });
+        chatListAdapter = new ChatListAdapter();
+        rvRecyclerview.setAdapter(chatListAdapter);
     }
 
     @Override
     public void onBackPressed() {
-        //3.if bottom view == Gone,finish()
-        if (clChatLayout.isBottomViewGone()) super.onBackPressed();
+        if (chatLayout.isBottomViewGone()) super.onBackPressed();
     }
-}
-</pre>
-	</li>
-</ol>
 
 
 ## How to

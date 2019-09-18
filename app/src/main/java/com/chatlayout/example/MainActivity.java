@@ -16,7 +16,6 @@ import com.actor.chatlayout.ChatLayout;
 import com.actor.chatlayout.OnListener;
 import com.actor.chatlayout.VoiceRecorderView;
 import com.actor.chatlayout.bean.ItemMore;
-import com.actor.chatlayout.fragment.EmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.chatlayout.utils.FaceManager;
 
@@ -29,7 +28,6 @@ public class MainActivity extends AppCompatActivity  {
     private RecyclerView      rvRecyclerview;
     private VoiceRecorderView voiceRecorder;
     private ChatLayout        clChatLayout;
-//    private FrameLayout       fl_bottom;
 
     private ChatListAdapter      chatListAdapter;
     private List<String>         items           = new ArrayList<>();
@@ -43,7 +41,6 @@ public class MainActivity extends AppCompatActivity  {
         rvRecyclerview = findViewById(R.id.rv_recyclerview);
         voiceRecorder = findViewById(R.id.voice_recorder);
         clChatLayout = findViewById(R.id.cl_chatLayout);
-//        fl_bottom = findViewById(R.id.fl_bottom);
 
         for (int i = 0; i < 20; i++) {
             items.add("Hello World!    " + i);
@@ -54,9 +51,7 @@ public class MainActivity extends AppCompatActivity  {
             bottomViewDatas.add(new ItemMore(imgRes, "Item" + i));
         }
 
-        clChatLayout.init(rvRecyclerview/*, null*/, voiceRecorder);//rvBottom
-
-        EmojiFragment emojiFragment = new EmojiFragment();
+        clChatLayout.init(rvRecyclerview, voiceRecorder);
 
         MoreFragment moreFragment = MoreFragment.newInstance(4, 50, bottomViewDatas);
         moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {//更多点击
@@ -65,10 +60,8 @@ public class MainActivity extends AppCompatActivity  {
                 toast(itemMore.itemText);
             }
         });
-        clChatLayout.setBottomFragments(getSupportFragmentManager(), emojiFragment, moreFragment);
-        /**
-         * 可重写其它方法,详情点击{@link OnListener}
-         */
+        clChatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
+
         clChatLayout.setOnListener(new OnListener() {
             @Override
             public void onBtnSendClick(EditText etMsg) {
@@ -108,11 +101,10 @@ public class MainActivity extends AppCompatActivity  {
                 super.onVoiceRecordError(e);
             }
 
-            //override other method ...
+            //还可重写其它方法override other method ...
         });
         chatListAdapter = new ChatListAdapter();
         rvRecyclerview.setAdapter(chatListAdapter);
-//        rvBottom.addItemDecoration(new RVItemDecoration(50, 50));//setPadding间距px
     }
 
     private void addData(String data) {

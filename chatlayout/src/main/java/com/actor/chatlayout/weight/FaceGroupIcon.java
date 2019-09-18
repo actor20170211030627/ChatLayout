@@ -11,7 +11,6 @@ import com.actor.chatlayout.R;
 
 /**
  * Description: 来自腾讯TUIKit Demo
- * Copyright  : Copyright (c) 2019
  * Company    : 重庆市了赢科技有限公司 http://www.liaoin.com/
  * Author     : 李大发
  * Date       : 2019/6/3 on 13:34

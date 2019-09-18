@@ -5,8 +5,7 @@ import android.os.Parcelable;
 
 /**
  * Description: MoreFragment 中的item
- * Copyright  : Copyright (c) 2019
- * Author     : actor
+ * Author     : 李大发
  * Date       : 2019/6/2 on 21:33
  */
 public class ItemMore implements Parcelable {

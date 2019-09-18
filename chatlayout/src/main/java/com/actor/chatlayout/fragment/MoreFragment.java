@@ -19,8 +19,7 @@ import java.util.ArrayList;
 
 /**
  * Description: 更多
- * Copyright  : Copyright (c) 2019
- * Author     : actor
+ * Author     : 李大发
  * Date       : 2019/6/2 on 20:07
  */
 public class MoreFragment extends Fragment {

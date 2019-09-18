@@ -36,7 +36,6 @@ import java.util.List;
 
 /**
  * Description: 表情
- * Copyright  : Copyright (c) 2019
  * Date       : 2019/6/2 on 20:08
  */
 public class EmojiFragment extends Fragment {

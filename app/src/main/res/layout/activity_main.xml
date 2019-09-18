@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,27 +14,27 @@
         android:gravity="center"
         android:text="Title"
         android:textColor="@color/white_for_chat_layout"
-        android:textSize="18sp"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="18sp" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_recyclerview"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/cl_chatLayout"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:stackFromEnd="true"
-        tools:listitem="@layout/item_chat_contact" />
+        android:layout_weight="1">
 
-    <com.actor.chatlayout.VoiceRecorderView
-        android:id="@+id/voice_recorder"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:stackFromEnd="true"
+            tools:listitem="@layout/item_chat_contact" />
+
+        <com.actor.chatlayout.VoiceRecorderView
+            android:id="@+id/voice_recorder"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
 
     <com.actor.chatlayout.ChatLayout
         android:id="@+id/cl_chatLayout"
@@ -43,13 +43,5 @@
         app:clBtnSendBackground="@drawable/selector_btn_send_for_chat_layout"
         app:clIvEmojiVisiable="true"
         app:clIvPlusVisiable="true"
-        app:clIvVoiceVisiable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_recyclerview" />
-
-    <!--    <FrameLayout-->
-    <!--        android:id="@+id/fl_bottom"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent" />-->
-</android.support.constraint.ConstraintLayout>
+        app:clIvVoiceVisiable="true" />
+</LinearLayout>

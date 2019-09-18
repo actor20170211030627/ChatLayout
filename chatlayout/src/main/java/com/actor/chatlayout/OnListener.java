@@ -9,8 +9,7 @@ import android.widget.TextView;
 
 /**
  * Description: 事件监听
- * Copyright  : Copyright (c) 2018
- * Author     : actor
+ * Author     : 李大发
  * Date       : 2016/10/4 on 11:40
  */
 
@@ -54,7 +53,7 @@ public abstract class OnListener {
      * @param listView
      * @param event
      */
-    public void onListViewTouchListener(View listView, MotionEvent event){}
+    public void onRecyclerViewTouchListener(View listView, MotionEvent event){}
 
     /**
      * 布局变化监听,一般不用重写此方法监听

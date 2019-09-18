@@ -7,8 +7,7 @@ import com.actor.chatlayout.ChatLayoutKit;
 
 /**
  * Description: 键盘
- * Copyright  : Copyright (c) 2019
- * Author     : actor
+ * Author     : 李大发
  * Date       : 2019/6/3 on 20:22
  */
 public class KeyboardUtils {

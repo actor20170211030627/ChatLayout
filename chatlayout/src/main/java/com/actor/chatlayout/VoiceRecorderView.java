@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 /**
  * Description: 按住说话, EaseUI里有一个EaseVoiceRecorderView可参考
- * Copyright  : Copyright (c) 2019
  * Company    : 重庆市了赢科技有限公司 http://www.liaoin.com/
  * Author     : 李大发
  * Date       : 2019/5/30 on 21:05

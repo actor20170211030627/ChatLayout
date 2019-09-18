@@ -13,7 +13,6 @@ import java.io.File;
  * Description: 来自腾讯TUIKit Demo中的录音和播放
  * 需要权限:
  *
- * Copyright  : Copyright (c) 2019
  * Company    : 重庆市了赢科技有限公司 http://www.liaoin.com/
  * Author     : 李大发
  * Date       : 2019/5/30 on 17:43

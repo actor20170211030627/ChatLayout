@@ -19,8 +19,7 @@ import java.util.ArrayList;
 
 /**
  * Description: 来自腾讯TUIKit Demo
- * Copyright  : Copyright (c) 2019
- * Author     : actor
+ * Author     : 李大发
  * Date       : 2019/6/3 on 13:31
  */
 public class EmojiIndicatorView extends LinearLayout {

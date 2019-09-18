@@ -72,8 +72,7 @@ public class FaceManager {
                     loadAssetBitmap(emojiFilters[i], "emoji/" + emojiFilters[i] + "@2x.png", true);
                 }
 //                ArrayList<CustomFaceGroupConfigs> faceConfigs = TUIKit.getBaseConfigs().getFaceConfigs();//自定义表情配置
-                if (faceConfigs == null)
-                    return;
+                if (faceConfigs == null) return;
                 for (int i = 0; i < faceConfigs.size(); i++) {
                     CustomFaceGroupConfigs groupConfigs = faceConfigs.get(i);
                     FaceGroup groupInfo = new FaceGroup();
@@ -138,8 +137,7 @@ public class FaceManager {
     }
 
 
-    public static int calculateInSampleSize(BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // 源图片的高度和宽度
         final int height = options.outHeight;
         final int width = options.outWidth;
@@ -155,8 +153,7 @@ public class FaceManager {
         return inSampleSize;
     }
 
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-                                                         int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -185,7 +182,7 @@ public class FaceManager {
      */
     public static void handlerEmojiText(TextView comment, String content) {
         if(comment == null) return;
-		if (TextUtils.isEmpty(content)) {
+        if (TextUtils.isEmpty(content)) {
             comment.setText(content);
             return;
         }
