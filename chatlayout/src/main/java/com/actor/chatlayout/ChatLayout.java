@@ -38,7 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.actor.chatlayout.bean.Emoji;
-import com.actor.chatlayout.fragment.EmojiFragment;
+import com.actor.chatlayout.fragment.ChatLayoutEmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.chatlayout.utils.FaceManager;
 import com.actor.chatlayout.utils.KeyboardUtils;
@@ -89,13 +89,13 @@ public class ChatLayout extends LinearLayout {
     private boolean isKeyboardActive = false; //输入法是否激活
     private KeyboardOnGlobalChangeListener keyboardOnGlobalChangeListener;//onDetachedFromWindow中注销
 
-    private VoiceRecorderView voiceRecorderView;//按住说话
-    private boolean           audioRecordIsCancel;//语音录制是否已取消
-    private float             startRecordY;//按下时的y坐标
-    private AlertDialog       mPermissionDialog;
-    private FragmentManager   fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
-    private EmojiFragment     emojiFragment;
-    private MoreFragment moreFragment;
+    private VoiceRecorderView       voiceRecorderView;//按住说话
+    private boolean                 audioRecordIsCancel;//语音录制是否已取消
+    private float                   startRecordY;//按下时的y坐标
+    private AlertDialog             mPermissionDialog;
+    private FragmentManager         fragmentManager;//用来控制下方emoji & ⊕ 的显示和隐藏
+    private ChatLayoutEmojiFragment emojiFragment;
+    private MoreFragment            moreFragment;
 
     public ChatLayout(Context context) {
         this(context, null);
@@ -191,10 +191,10 @@ public class ChatLayout extends LinearLayout {
      */
     public void setBottomFragment(FragmentManager fragmentManager, MoreFragment moreFragment) {
         this.fragmentManager = fragmentManager;
-        this.emojiFragment = new EmojiFragment();
+        this.emojiFragment = new ChatLayoutEmojiFragment();
         this.moreFragment = moreFragment;
 
-        this.emojiFragment.setListener(new EmojiFragment.OnEmojiClickListener() {
+        this.emojiFragment.setOnEmojiClickListener(new ChatLayoutEmojiFragment.OnEmojiClickListener() {
             @Override
             public void onEmojiDelete() {
                 KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
@@ -203,10 +203,12 @@ public class ChatLayout extends LinearLayout {
 
             @Override
             public void onEmojiClick(Emoji emoji) {
-                int index = etMsg.getSelectionStart();
+                int start = etMsg.getSelectionStart();
+                int end = etMsg.getSelectionEnd();
                 Editable editable = etMsg.getText();
-                editable.insert(index, emoji.filter);
-                FaceManager.handlerEmojiText(etMsg, editable.toString());
+                if (start != end) editable.delete(start, end);//已选中
+                editable.insert(start, emoji.filter);
+                FaceManager.handlerEmojiText(etMsg, editable);
             }
 
             @Override

@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    tools:context=".activity.LoginActivity">
 
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_go2chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:text="Go to Chat" />
 
     <Button
         android:layout_width="match_parent"
@@ -20,4 +20,11 @@
         android:autoLink="all"
         android:text="View on Github:\n
 https://github.com/actor20170211030627/ChatLayout" />
+
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/action_bar_size"
+        android:gravity="center"
+        tools:text="VersionName: 1.0.0(VersionCode: 1)" />
 </LinearLayout>

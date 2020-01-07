@@ -22,7 +22,7 @@
         android:layout_weight="1">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_recyclerview"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
@@ -37,7 +37,7 @@
     </FrameLayout>
 
     <com.actor.chatlayout.ChatLayout
-        android:id="@+id/cl_chatLayout"
+        android:id="@+id/chat_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:clBtnSendBackground="@drawable/selector_btn_send_for_chat_layout"

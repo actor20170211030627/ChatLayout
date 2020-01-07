@@ -31,10 +31,6 @@ public class RecentEmojiManager {
     }
 
 
-    public String getString(String key) {
-        return mPreferences.getString(key, "");
-    }
-
     public RecentEmojiManager putString(String key, String value) {
         mEditor.putString(key, value).apply();
         return this;
@@ -66,5 +62,9 @@ public class RecentEmojiManager {
         Collection collection = (Collection) objectInputStream.readObject();
         objectInputStream.close();
         return collection;
+    }
+
+    public String getString(String key) {
+        return mPreferences.getString(key, "");
     }
 }

@@ -17,7 +17,7 @@
 ## Usage
 **1.** 在Application中初始化
 
-    ChatLayoutKit.init(getApplication());//初始化
+    ChatLayoutKit.init(getApplication(), true);//初始化
 
 **2.** 布局文件中xml
 
@@ -177,11 +177,20 @@ Add it in your root build.gradle at the end of repositories:
 [![](https://jitpack.io/v/actor20170211030627/ChatLayout.svg)](https://jitpack.io/#actor20170211030627/ChatLayout)
 
     dependencies {
+		    implementation 'com.android.support:appcompat-v7:your_version'
+		    implementation 'com.android.support:recyclerview-v7:your_version'
+		    implementation 'com.android.support.constraint:constraint-layout:your_version'
+		
+		    //https://github.com/bumptech/glide
+		    implementation 'com.github.bumptech.glide:glide:your_version'
+
+			//https://github.com/actor20170211030627/ChatLayout
             implementation 'com.github.actor20170211030627:ChatLayout:version'
     }
 
 ## Thanks
-<a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a>
+keyboard from: <a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a> <br />
+emoji from: <a href="https://github.com/tencentyun/TIMSDK" target="_blank">tencentyun/TIMSDK</a>
 
 ## License
  Apache 2.0.

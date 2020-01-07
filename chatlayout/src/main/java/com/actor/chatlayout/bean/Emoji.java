@@ -15,8 +15,9 @@ public class Emoji {
     private static final int deaultSize = ConverUtils.dp2px(32);
 
     public String desc;
-    public String filter;
+    public String filter;//示例: [龇牙]
     public Bitmap icon;
+    public String assetsPath;//在assets中的路径, 示例: emoji/[龇牙]@2x.png, Glide加载时: file:/// + assetsPath
     public int    width = deaultSize;
     public int    height = deaultSize;
 }

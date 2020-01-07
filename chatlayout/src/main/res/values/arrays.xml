@@ -140,5 +140,10 @@
         <item>[纸巾]</item>
         <item>[手枪]</item>
         <item>[青蛙]</item>
+
+        <!--TIMSDK没加的3个Emoji-->
+        <item>[汽车]</item>
+        <item>[睡觉]</item>
+        <item>[药]</item>
     </string-array>
 </resources>

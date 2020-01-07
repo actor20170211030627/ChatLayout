@@ -6,8 +6,7 @@ import android.content.Context;
 import com.actor.chatlayout.utils.FaceManager;
 
 /**
- * Description: 用作初始化
- * Company    : 重庆市了赢科技有限公司 http://www.liaoin.com/
+ * Description: 用作初始化, 项目地址: https://github.com/actor20170211030627/ChatLayout
  * Author     : 李大发
  * Date       : 2019/6/3 on 20:45
  */
@@ -16,11 +15,12 @@ public class ChatLayoutKit {
     private static Application application;
 
     /**
-     * 传入ApplicationContext
+     * @param application 传入Application
+     * @param loadDefaultEmoji 是否加载默认Emoji
      */
-    public static void init(Application application) {
+    public static void init(Application application, boolean loadDefaultEmoji) {
         ChatLayoutKit.application = application;
-        FaceManager.loadFaceFiles(null);
+        if (loadDefaultEmoji) FaceManager.loadDefaultEmoji();
     }
 
     public static Context getContext() {
