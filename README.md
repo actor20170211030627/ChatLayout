@@ -188,9 +188,18 @@ Add it in your root build.gradle at the end of repositories:
         implementation 'com.github.actor20170211030627:ChatLayout:version'
     }
 
+## TODO
+<ol>
+    <li>增加<code>raw/drawable</code>等方式添加自定义表情</li>
+    <li>修改☺和⊕点击后键盘显示逻辑问题</li>
+    <li>考虑对EditText.setFilters的方式监听Emoji输入</li>
+</ol>
+
 ## Thanks
-keyboard from: <a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a> <br />
-emoji from: <a href="https://github.com/tencentyun/TIMSDK" target="_blank">tencentyun/TIMSDK</a>
+<ul>
+    <li>keyboard from: <a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a> </li>
+    <li>emoji from: <a href="https://github.com/tencentyun/TIMSDK" target="_blank">tencentyun/TIMSDK</a></li>
+</ul>
 
 ## License
  Apache 2.0.
