@@ -181,8 +181,8 @@ Add it in your root build.gradle at the end of repositories:
         implementation 'com.android.support:recyclerview-v7:your_version'
         implementation 'com.android.support.constraint:constraint-layout:your_version'
 
-        //https://github.com/bumptech/glide
-        implementation 'com.github.bumptech.glide:glide:your_version'
+        //https://github.com/actor20170211030627/MyAndroidFrameWork
+        implementation 'com.github.actor20170211030627:MyAndroidFrameWork:1.3.4'
 
         //https://github.com/actor20170211030627/ChatLayout
         implementation 'com.github.actor20170211030627:ChatLayout:version'

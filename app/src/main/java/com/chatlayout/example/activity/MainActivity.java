@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.actor.chatlayout.ChatLayout;
 import com.actor.chatlayout.OnListener;
-import com.actor.chatlayout.VoiceRecorderView;
 import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.chatlayout.utils.FaceManager;
+import com.actor.myandroidframework.widget.VoiceRecorderView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chatlayout.example.R;

@@ -42,6 +42,8 @@ import com.actor.chatlayout.fragment.ChatLayoutEmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.chatlayout.utils.FaceManager;
 import com.actor.chatlayout.utils.KeyboardUtils;
+import com.actor.myandroidframework.utils.audio.AudioUtils;
+import com.actor.myandroidframework.widget.VoiceRecorderView;
 
 /**
  * <ul>
@@ -181,7 +183,6 @@ public class ChatLayout extends LinearLayout {
             bottomView.setVisibility(GONE);
         }
         if (voiceRecorderView != null) voiceRecorderView.setVisibility(GONE);
-        UIKitAudioArmMachine.init(getContext(), null);//初始化录音, 默认最大录音时长2分钟
     }
 
     /**
@@ -318,7 +319,7 @@ public class ChatLayout extends LinearLayout {
                                     audioRecordIsCancel = false;
                                     startRecordY = event.getY();
                                     voiceRecorderView.startRecording();
-                                    UIKitAudioArmMachine.getInstance().startRecord(new UIKitAudioArmMachine.AudioRecordCallback() {
+                                    AudioUtils.getInstance().startRecord(new AudioUtils.AudioRecordCallback() {
 
                                         @Override
                                         public void recordComplete(String audioPath,
@@ -333,7 +334,7 @@ public class ChatLayout extends LinearLayout {
                                             }
                                             voiceRecorderView.stopRecording();
                                             String recordAudioPath =//语音路径
-                                                    UIKitAudioArmMachine.getInstance().getRecordAudioPath();
+                                                    AudioUtils.getInstance().getRecordAudioPath();
                                             if (!TextUtils.isEmpty(recordAudioPath))
                                                 onListener.onVoiceRecordSuccess(recordAudioPath, durationMs);
                                         }
@@ -370,7 +371,7 @@ public class ChatLayout extends LinearLayout {
 //                                    } else {
 //                                        audioRecordIsCancel = false;
 //                                    }
-                                    UIKitAudioArmMachine.getInstance().stopRecord(audioRecordIsCancel);
+                                    AudioUtils.getInstance().stopRecord(audioRecordIsCancel);
                                     break;
                             }
                         }
@@ -685,8 +686,8 @@ public class ChatLayout extends LinearLayout {
             }
             keyboardOnGlobalChangeListener = null;
         }
-        UIKitAudioArmMachine.getInstance().stopRecord(true);
-        UIKitAudioArmMachine.getInstance().stopPlayRecord();
+        AudioUtils.getInstance().stopRecord(true);
+        AudioUtils.getInstance().stopPlayRecord();
         if (fragmentManager != null) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             if (emojiFragment != null && emojiFragment.isAdded()) transaction.remove(emojiFragment);

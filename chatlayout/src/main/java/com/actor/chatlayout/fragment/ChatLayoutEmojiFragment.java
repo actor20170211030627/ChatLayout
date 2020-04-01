@@ -14,13 +14,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.actor.chatlayout.R;
-import com.actor.chatlayout.RVItemDecoration;
 import com.actor.chatlayout.bean.Emoji;
 import com.actor.chatlayout.bean.FaceGroup;
 import com.actor.chatlayout.utils.ConverUtils;
 import com.actor.chatlayout.utils.FaceManager;
 import com.actor.chatlayout.utils.RecentEmojiManager;
 import com.actor.chatlayout.weight.FaceGroupIcon;
+import com.actor.myandroidframework.widget.BaseItemDecoration;
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
@@ -102,7 +102,7 @@ public class ChatLayoutEmojiFragment extends Fragment implements View.OnClickLis
         super.onViewCreated(view, savedInstanceState);
         dp10 = ConverUtils.dp2px(10);
         MyAdapter myAdapter = new MyAdapter();
-        recyclerView.addItemDecoration(new RVItemDecoration(dp10, dp10));
+        recyclerView.addItemDecoration(new BaseItemDecoration(dp10, dp10));
         recyclerView.setAdapter(myAdapter);
     }
 

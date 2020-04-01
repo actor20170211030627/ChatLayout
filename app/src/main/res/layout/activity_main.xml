@@ -29,7 +29,7 @@
             app:stackFromEnd="true"
             tools:listitem="@layout/item_chat_contact" />
 
-        <com.actor.chatlayout.VoiceRecorderView
+        <com.actor.myandroidframework.widget.VoiceRecorderView
             android:id="@+id/voice_recorder"
             android:layout_width="200dp"
             android:layout_height="200dp"

@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.R;
-import com.actor.chatlayout.RVItemDecoration;
+import com.actor.chatlayout.bean.ItemMore;
+import com.actor.myandroidframework.widget.BaseItemDecoration;
 
 import java.util.ArrayList;
 
@@ -74,7 +74,7 @@ public class MoreFragment extends Fragment {
         GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
         layoutManager.setSpanCount(spanCount);
         moreAdapter = new MoreAdapter(items);
-        recyclerView.addItemDecoration(new RVItemDecoration(itemDecorationPx, itemDecorationPx));
+        recyclerView.addItemDecoration(new BaseItemDecoration(itemDecorationPx, itemDecorationPx));
         recyclerView.setAdapter(moreAdapter);
     }
 
