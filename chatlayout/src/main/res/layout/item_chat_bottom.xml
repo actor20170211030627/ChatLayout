@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:background="@drawable/shape_rectangle_corners_10"
             android:padding="5dp"
             android:scaleType="fitCenter"
-            tools:src="@drawable/bg_green_for_chat_layout"/>
+            tools:src="@drawable/ic_holder_light_for_nine_grid_view" />
     </com.actor.chatlayout.weight.RatioLayout>
 
     <TextView
@@ -29,5 +28,5 @@
         android:layout_marginTop="6dp"
         android:gravity="center"
         android:textColor="@color/gray_6f7378_for_chat_layout"
-        tools:text="相册"/>
+        tools:text="相册" />
 </LinearLayout>

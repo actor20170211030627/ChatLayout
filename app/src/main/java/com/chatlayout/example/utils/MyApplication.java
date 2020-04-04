@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.actor.chatlayout.ChatLayoutKit;
 import com.actor.myandroidframework.application.ActorApplication;
+import com.actor.myandroidframework.utils.audio.AudioUtils;
 import com.chatlayout.example.service.CheckUpdateService;
 
 import okhttp3.OkHttpClient;
@@ -24,6 +25,8 @@ public class MyApplication extends ActorApplication {
     public void onCreate() {
         super.onCreate();
         ChatLayoutKit.init(this, true);//Application中初始化
+        //初始化语音, 默认最大录音时长2分钟. 如果不用语音, 不用初始化
+        AudioUtils.getInstance().init(null, null);
 
         startService(new Intent(this, CheckUpdateService.class));//检查更新
     }

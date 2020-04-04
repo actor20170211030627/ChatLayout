@@ -132,7 +132,7 @@ public class MainActivity extends BaseActivity {
         @Override
         protected void convert(@NonNull BaseViewHolder helper, String item) {
             TextView tv = helper.addOnClickListener(R.id.tv).getView(R.id.tv);
-            FaceManager.handlerEmojiText(tv, item);
+            FaceManager.handlerEmojiText(tv, FaceManager.EMOJI_REGEX, item);
         }
     }
 

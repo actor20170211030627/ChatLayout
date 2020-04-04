@@ -38,6 +38,7 @@ public class ItemMore implements Parcelable {
         itemText = in.readString();
     }
 
+    //必须要有一个非空的静态变量 CREATOR
     public static final Creator<ItemMore> CREATOR = new Creator<ItemMore>() {
         @Override
         public ItemMore createFromParcel(Parcel in) {

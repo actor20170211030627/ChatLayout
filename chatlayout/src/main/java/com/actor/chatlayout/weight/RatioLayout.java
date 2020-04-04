@@ -21,12 +21,12 @@ import com.actor.chatlayout.R;
  * 3、在自定义控件中获取自定义属性的值
  *      a、通过attrs，在所有的属性中进行查找
  *      b、通过attrs获取自定义属性集合，然后通过下标索引的方式获取自定义属性的值
+ * @deprecated 下一版本更新, 删除
  */
 
+@Deprecated
 public class RatioLayout extends FrameLayout {
 
-    //public static final float ratio = 2.43f;
-    private static final String NAMESPACE = "http://schemas.android.com/apk/res-auto";
     private float ratio;        //比例
 
     //new对象的时候调用

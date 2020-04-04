@@ -53,21 +53,7 @@
         android:adjustViewBounds="true"
         android:paddingRight="8dp"
         android:src="@drawable/face_delete"
-        app:layout_constraintBottom_toTopOf="@+id/face_view_group"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintWidth_percent="0.1" />
-
-    <LinearLayout
-        android:id="@+id/face_view_group"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#ECEFF1"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <com.actor.chatlayout.weight.FaceGroupIcon
-            android:id="@+id/face_first_set"
-            android:layout_width="70dp"
-            android:layout_height="match_parent" />
-    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

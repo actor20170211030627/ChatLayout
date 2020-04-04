@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:clBtnSendBackground="@drawable/selector_btn_send_for_chat_layout"
-        app:clIvEmojiVisiable="true"
-        app:clIvPlusVisiable="true"
-        app:clIvVoiceVisiable="true" />
+        app:clIvEmojiVisiable="visible"
+        app:clIvPlusVisiable="visible"
+        app:clIvVoiceVisiable="visible" />
 </LinearLayout>

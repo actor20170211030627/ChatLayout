@@ -1,28 +1,30 @@
 package com.actor.chatlayout.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.actor.chatlayout.R;
 import com.actor.chatlayout.bean.ItemMore;
+import com.actor.myandroidframework.fragment.ActorBaseFragment;
 import com.actor.myandroidframework.widget.BaseItemDecoration;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description: 更多
  * Author     : 李大发
  * Date       : 2019/6/2 on 20:07
  */
-public class MoreFragment extends Fragment {
+public class MoreFragment extends ActorBaseFragment {
 
     public static final String              SPAN_COUNT = "SPAN_COUNT";
     public static final String              ITEM_DECORATION = "ITEM_DECORATION";
@@ -35,11 +37,10 @@ public class MoreFragment extends Fragment {
     private             MoreAdapter         moreAdapter;
 
     /**
-     * 官方获取实例
+     * 获取实例
      * @param spanCount recyclerview 行数, 一般4行
      * @param itemDecorationPx item间距, 单位px
      * @param items 填充到 recyclerview 中的数据
-     * @return
      */
     public static MoreFragment newInstance(int spanCount, int itemDecorationPx, ArrayList<ItemMore> items) {
         MoreFragment fragment = new MoreFragment();
@@ -51,8 +52,9 @@ public class MoreFragment extends Fragment {
         return fragment;
     }
 
+    //获取参数
     @Override
-    public void onCreate(Bundle savedInstanceState) {//官方获取参数
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -74,35 +76,19 @@ public class MoreFragment extends Fragment {
         GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
         layoutManager.setSpanCount(spanCount);
         moreAdapter = new MoreAdapter(items);
+        moreAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (mListener != null) mListener.onItemClick(position, items.get(position));
+            }
+        });
         recyclerView.addItemDecoration(new BaseItemDecoration(itemDecorationPx, itemDecorationPx));
         recyclerView.setAdapter(moreAdapter);
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnItemClickListener) {
-//            mListener = (OnItemClickListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnItemClickListener");
-//        }
-//    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-        moreAdapter = null;
-    }
-
-
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-    }
-
+    /**
+     * 设置 Item 点击监听
+     */
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         mListener = onItemClickListener;
     }
@@ -111,50 +97,21 @@ public class MoreFragment extends Fragment {
         void onItemClick(int position, ItemMore itemMore);
     }
 
-    public class MoreAdapter extends RecyclerView.Adapter<MoreViewHolder> {
-
-        private ArrayList<ItemMore> items;
-
-        public MoreAdapter(ArrayList<ItemMore> items) {
-            this.items = items;
+    //Adapter
+    protected class MoreAdapter extends BaseQuickAdapter<ItemMore, BaseViewHolder> {
+        protected MoreAdapter(@Nullable List<ItemMore> data) {
+            super(R.layout.item_chat_bottom, data);
         }
-
         @Override
-        public MoreViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_chat_bottom, parent, false);
-            return new MoreViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(MoreViewHolder holder, int position) {
-            ItemMore itemMore = items.get(position);
-            holder.iv.setImageResource(itemMore.itemIcon);
-            holder.tv.setText(itemMore.itemText);
-            holder.itemView.setTag(position);
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int pos = (int) v.getTag();
-                    if (mListener != null) mListener.onItemClick(pos, items.get(pos));
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
+        protected void convert(@NonNull BaseViewHolder helper, ItemMore item) {
+            helper.setText(R.id.tv, item.itemText).setImageResource(R.id.iv, item.itemIcon);
         }
     }
 
-    public static class MoreViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView iv;
-        public TextView  tv;
-
-        public MoreViewHolder(View itemView) {
-            super(itemView);
-            iv = itemView.findViewById(R.id.iv);
-            tv = itemView.findViewById(R.id.tv);
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mListener = null;
+        moreAdapter = null;
     }
 }

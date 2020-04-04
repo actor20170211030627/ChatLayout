@@ -5,22 +5,16 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.DisplayMetrics;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.actor.chatlayout.ChatLayoutKit;
-import com.actor.chatlayout.R;
-import com.actor.chatlayout.bean.CustomFaceGroupConfigs;
 import com.actor.chatlayout.bean.Emoji;
-import com.actor.chatlayout.bean.FaceConfig;
-import com.actor.chatlayout.bean.FaceGroup;
+import com.actor.myandroidframework.utils.ThreadUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,188 +23,134 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * description: 加载表情等
+ * author     : 李大发
+ * date       : 2019/6/3 on 22:16
+ * @version 1.0
+ */
 public class FaceManager {
 
-    private static final Context                  context          = ChatLayoutKit.getContext();
-    private static final List<Emoji>              defaultEmojiList = new ArrayList<>();//默认Emoji列表
-
-//    private static final LruCache<String, Bitmap> drawableCache    = new LruCache<>(1024);
-    private static final int                      drawableWidth    = ConverUtils.dp2px(32);
-    private static final ArrayList<FaceGroup>     customFace       = new ArrayList<>();
+    protected static final Context     context             = ChatLayoutKit.context;
+    protected static final List<Emoji> emojiList           = new ArrayList<>();//Emoji列表
 
     /**
-     * 加载默认Emoji表情
+     * 默认表情的正则:
+     * \[    转义左中括号
+     * \S    匹配所有非空白字符
+     * ?     标记?之前的字符为"可选". 0 或 1 次
      */
-    public static void loadDefaultEmoji() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String[] emojiFilters = context.getResources().getStringArray(R.array.emoji_filter);
-                List<Emoji> emojis = loadEmojisFromAssets(emojiFilters, "emoji");
-                if (emojis != null) {
-                    defaultEmojiList.clear();
-                    defaultEmojiList.addAll(emojis);
-                    emojis.clear();
-                }
-            }
-        }).start();
-    }
+    public static final    String      DEFAULT_EMOJI_REGEX = "\\[\\S+?]";
+    public static          String      EMOJI_REGEX;//你加载的Emoji的正则
 
     /**
      * 从assets文件夹中加载Emojis, 加载的Emoji是无序的
-     * @param regex 表情的匹配正则, 用于读取表情的输入意思, 示例: [龇牙] 的匹配是: \[\S+]
-     * @param assetPath 表情在assets下路径, 示例: emoji(文件夹)
+     * @param regex 表情的匹配正则, 用于读取表情的输入意思, 示例: "[龇牙]" 的匹配是 {@link #DEFAULT_EMOJI_REGEX}
+     * @param assetPathName 表情在assets下路径, 示例: "emoji"(表情在这个文件夹内)
+     * @param listener 加载完成监听
      */
-    public static List<Emoji> loadEmojisFromAssets(String regex, String assetPath) {
-        try {
-            String[] emojis = context.getAssets().list(assetPath);//emoji文件夹下所有表情
-            List<Emoji> emojiList = new ArrayList<>(emojis.length);
-            Pattern p = Pattern.compile(regex);
-            for (String emoji : emojis) {//emoji: [龇牙]@2x.png
-                Matcher m = p.matcher(emoji);
-                if (m.find()) {
-                    String emojiName = m.group();//[龇牙]
-                    Emoji emoji1 = new Emoji();
-                    emoji1.assetsPath = assetPath + "/" + emoji;
-                    emoji1.filter = emojiName;
-                    emojiList.add(emoji1);
+    public static void loadEmojisFromAssets(String regex, String assetPathName, OnLoadCompleteListener listener) {
+        if (listener == null) return;
+        ThreadUtils.runOnSubThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String[] emojis = context.getAssets().list(assetPathName);//emoji文件夹下所有表情
+                    if (emojis == null || emojis.length == 0) {
+                        listener.onLoadComplete(null);
+                    } else {
+                        List<Emoji> emojiList = new ArrayList<>(emojis.length);
+                        Pattern p = Pattern.compile(regex);
+                        for (String emoji : emojis) {//emoji图片表情名称: "[龇牙]@2x.png"
+                            Matcher m = p.matcher(emoji);
+                            if (m.find()) {
+                                String emojiName = m.group();//匹配到的第一组 "[龇牙]"
+                                //"[龇牙]", "emoji/[龇牙]@2x.png"
+                                Emoji emoji1 = new Emoji(emojiName, assetPathName + "/" + emoji);
+                                emojiList.add(emoji1);
+                            }
+                        }
+                        listener.onLoadComplete(emojiList);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    listener.onLoadComplete(null);
                 }
             }
-            return emojiList;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        });
     }
 
     /**
      * 从assets文件夹中加载Emojis, 根据 emojiFilters 排序
-     * @param emojiFilters emoji表情名称列表, 用于从Assets中读取Emoji后排序, 示例: [龇牙]
-     * @param assetPath 表情在assets下路径, 示例: emoji(文件夹)
+     * @param emojiNames emoji表情名称列表, 用于从Assets中读取Emoji后排序, 示例: "[龇牙]"
+     * @param assetPathName 表情在assets下路径, 示例: "emoji"(表情在这个文件夹内)
+     * @param listener 加载完成监听
      */
-    public static List<Emoji> loadEmojisFromAssets(String[] emojiFilters, String assetPath) {
-        try {
-            String[] emojis = context.getAssets().list(assetPath);//emoji文件夹下所有表情
-            List<Emoji> emojiList = new ArrayList<>(emojis.length);
-            for (String emojiFilter : emojiFilters) {//emojiFilter: [龇牙]
-                for (String emoji : emojis) {//emoji: [龇牙]@2x.png
-                    if (emoji.contains(emojiFilter)) {
-                        Emoji emoji1 = new Emoji();
-                        emoji1.assetsPath = assetPath + "/" + emoji;
-                        emoji1.filter = emojiFilter;
-                        emojiList.add(emoji1);
-                    }
-                }
-            }
-            return emojiList;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 加载Emoji
-     * @param faceConfigs
-     */
-    public static void loadFaceFiles(@Nullable final ArrayList<CustomFaceGroupConfigs> faceConfigs) {
-        if (faceConfigs == null || faceConfigs.isEmpty()) return;
-        new Thread() {
+    public static void loadEmojisFromAssets(List<String> emojiNames, String assetPathName, OnLoadCompleteListener listener) {
+        if (listener == null) return;
+        ThreadUtils.runOnSubThread(new Runnable() {
             @Override
             public void run() {
-//                ArrayList<CustomFaceGroupConfigs> faceConfigs = TUIKit.getBaseConfigs().getFaceConfigs();//自定义表情配置
-                for (int i = 0; i < faceConfigs.size(); i++) {
-                    CustomFaceGroupConfigs groupConfigs = faceConfigs.get(i);
-                    FaceGroup groupInfo = new FaceGroup();
-                    groupInfo.groupId = groupConfigs.faceGroupId;
-                    groupInfo.desc = groupConfigs.faceIconName;
-                    groupInfo.pageColumnCount = groupConfigs.pageColumnCount;
-                    groupInfo.pageRowCount = groupConfigs.pageRowCount;
-                    groupInfo.groupIcon = loadAssetBitmap(groupConfigs.faceIconName, groupConfigs.faceIconPath, false).icon;
-
-
-                    ArrayList<FaceConfig> faceArray = groupConfigs.array;
-                    ArrayList<Emoji> faceList = new ArrayList<>();
-                    for (int j = 0; j < faceArray.size(); j++) {
-                        FaceConfig config = faceArray.get(j);
-                        Emoji emoji = loadAssetBitmap(config.faceName, config.assetPath, false);
-                        emoji.width = config.faceWidth;
-                        emoji.height = config.faceHeight;
-                        faceList.add(emoji);
-
-                    }
-                    groupInfo.faces = faceList;
-                    customFace.add(groupInfo);
-                }
-            }
-        }.start();
-    }
-
-    /**
-     * 从assets文件夹中加载Emoji
-     * @param filter 表情的filter, 示例: [龇牙]
-     * @param assetPath 表情在assets下路径, 示例: emoji/[龇牙]@2x.png
-     * @param isEmoji 是否是emoji, 示例: true
-     * @return 自定义表情
-     */
-    private static Emoji loadAssetBitmap(String filter, String assetPath, boolean isEmoji) {
-        InputStream is = null;
-        try {
-            Emoji emoji = new Emoji();
-            Resources resources = context.getResources();
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inDensity = DisplayMetrics.DENSITY_XXHIGH;
-            options.inScreenDensity = resources.getDisplayMetrics().densityDpi;
-            options.inTargetDensity = resources.getDisplayMetrics().densityDpi;
-            is = context.getAssets().open(assetPath);
-            Bitmap bitmap = BitmapFactory.decodeStream(is, new Rect(0, 0, drawableWidth, drawableWidth), options);
-            if (bitmap != null) {
-//                drawableCache.put(filter, bitmap);
-                emoji.icon = bitmap;
-                emoji.filter = filter;
-                if (isEmoji) defaultEmojiList.add(emoji);
-            }
-            return emoji;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
                 try {
-                    is.close();
+                    String[] emojis = context.getAssets().list(assetPathName);//emoji文件夹下所有表情
+                    if (emojis == null || emojis.length == 0) {
+                        listener.onLoadComplete(null);
+                    } else {
+                        List<Emoji> emojiList = new ArrayList<>(emojis.length);
+                        for (String emojiName : emojiNames) {//emojiName: "[龇牙]"
+                            for (String emoji : emojis) {//emoji图片表情名称: "[龇牙]@2x.png"
+                                if (emoji.contains(emojiName)) {
+                                    //"[龇牙]", "emoji/[龇牙]@2x.png"
+                                    Emoji emoji1 = new Emoji(emojiName, assetPathName + "/" + emoji);
+                                    emojiList.add(emoji1);
+                                }
+                            }
+                        }
+                        listener.onLoadComplete(emojiList);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    listener.onLoadComplete(null);
                 }
             }
-        }
-        return null;
+        });
+    }
+
+    public interface OnLoadCompleteListener {
+        /**
+         * 加载完成
+         */
+        void onLoadComplete(List<Emoji> emojis);
     }
 
     /**
-     * 给TextView 设置有emoji 的文字
-     * @param content
+     * 给TextView 设置有 emoji 的文字
+     * @param regex 用于匹配emoji的正则, 例: {@link #DEFAULT_EMOJI_REGEX}
+     * @param content 包含emoji的内容
      */
-    public static void handlerEmojiText(TextView textView, CharSequence content) {
+    public static void handlerEmojiText(TextView textView, String regex, CharSequence content) {
         if(textView == null) return;
         if (TextUtils.isEmpty(content)) {
             textView.setText(content);
             return;
         }
         SpannableStringBuilder ssb = new SpannableStringBuilder(content);
-        String regex = "\\[(\\S+?)]";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(content);
         while (m.find()) {
             String tempText = m.group();//[龇牙]
-            for (final Emoji emoji : defaultEmojiList) {
+            for (Emoji emoji : emojiList) {
                 if (tempText.equals(emoji.filter)) {
-                    //Bitmap bitmap = drawableCache.get(tempText);
-                    try {
-                        Bitmap bitmap = assets2Bitmap(context, emoji.assetsPath);
+                    Bitmap bitmap = null;
+                    if (emoji.assetsPath != null) {//assets
+                        bitmap = assets2Bitmap(emoji.assetsPath);
+                    } else if (emoji.drawable$RawId != null) {//drawable / raw
+                        bitmap = BitmapFactory.decodeResource(context.getResources(), emoji.drawable$RawId);
+                    }
+                    if (bitmap != null) {
                         //转换为Span, SPAN_INCLUSIVE_EXCLUSIVE: 2个Span之间不能输入文字...
                         ssb.setSpan(new ImageSpan(context, bitmap), m.start(), m.end(),
                                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                     break;
                 }
@@ -226,7 +166,7 @@ public class FaceManager {
     /** Assets转Bitmap
      * @param assetsPath 在assets中的路径, 示例: emoji/[龇牙]@2x.png
      */
-    public static Bitmap assets2Bitmap(Context context, String assetsPath){
+    public static Bitmap assets2Bitmap(String assetsPath) {
         AssetManager am = context.getAssets();
         InputStream is = null;
         try {
@@ -241,7 +181,8 @@ public class FaceManager {
     ///////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+    public static Bitmap decodeSampledBitmapFromResource(int resId, int reqWidth, int reqHeight) {
+        Resources res = context.getResources();
         // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -269,33 +210,45 @@ public class FaceManager {
         return inSampleSize;
     }
 
-    public static List<Emoji> getDefaultEmojiList() {
-        return defaultEmojiList;
+    /**
+     * 如果你加载了默认表情, 返回默认加载的表情列表
+     */
+    public static List<Emoji> getEmojiList() {
+        return emojiList;
     }
 
-    public static List<FaceGroup> getCustomFaceList() {
-        return customFace;
-    }
-
-    public static Bitmap getCustomBitmap(int groupId, String name) {
-        for (int i = 0; i < customFace.size(); i++) {
-            FaceGroup group = customFace.get(i);
-            if (group.groupId == groupId) {
-                ArrayList<Emoji> faces = group.faces;
-                for (int j = 0; j < faces.size(); j++) {
-                    Emoji face = faces.get(j);
-                    if (face.filter.equals(name)) {
-                        return face.icon;
-                    }
-                }
-
+    /**
+     * 设置表情列表
+     */
+    public static void setEmojiList(List<Emoji> list, boolean defaultEmoji, String regex) {
+        if (list != null) {
+            if (defaultEmoji) {
+                emojiList.clear();
+                emojiList.addAll(list);
+            } else {
+                // TODO: 2020/4/4
             }
+            EMOJI_REGEX = regex;
         }
-        return null;
     }
 
-    public static boolean isFaceChar(String faceChar) {
-//        return drawableCache.get(faceChar) != null;
-        return false;
-    }
+//    public static List<FaceGroup> getCustomFaceList() {
+//        return customFace;
+//    }
+//
+//    public static Bitmap getCustomBitmap(int groupId, String name) {
+//        for (int i = 0; i < customFace.size(); i++) {
+//            FaceGroup group = customFace.get(i);
+//            if (group.groupId == groupId) {
+//                ArrayList<Emoji> faces = group.faces;
+//                for (int j = 0; j < faces.size(); j++) {
+//                    Emoji face = faces.get(j);
+//                    if (face.filter.equals(name)) {
+//                        return face.icon;
+//                    }
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

@@ -18,6 +18,8 @@
 **1.** 在Application中初始化
 
     ChatLayoutKit.init(getApplication(), true);//初始化
+    //初始化语音, 默认最大录音时长2分钟. 如果不用语音, 不用初始化
+    AudioUtils.getInstance().init(null, null);
 
 **2.** 布局文件中xml
 
@@ -175,6 +177,14 @@ Add it in your root build.gradle at the end of repositories:
 
 **Step 2.** Add the dependency, the last version:
 [![](https://jitpack.io/v/actor20170211030627/ChatLayout.svg)](https://jitpack.io/#actor20170211030627/ChatLayout)
+
+    android {
+      ...
+      compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+      }
+    }
 
     dependencies {
         implementation 'com.android.support:appcompat-v7:your_version'
