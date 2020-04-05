@@ -1,5 +1,7 @@
 package com.actor.chatlayout.bean;
 
+import android.support.annotation.Nullable;
+
 import com.blankj.utilcode.util.ConvertUtils;
 
 /**
@@ -9,7 +11,7 @@ import com.blankj.utilcode.util.ConvertUtils;
  */
 public class Emoji {
 
-    private static final int deaultSize = ConvertUtils.dp2px(32);
+    public static final int DEAULT_SIZE = ConvertUtils.dp2px(25);
 
     //如果Emoji来自assets, Glide加载时, 需要在前面加上这个前缀
     public static final String ASSETS_PREFIX = "file:///android_asset/";
@@ -22,21 +24,25 @@ public class Emoji {
 //    public boolean isEmojiFromAssets;
 
     //在assets中的路径, 示例: "emoji/[龇牙]@2x.png", Glide加载时: Emoji.ASSETS_PREFIX + assetsPath
-    public String assetsPath;
+    public @Nullable String assetsPath;
 
     //drawable or raw 资源id
-    public Integer drawable$RawId;
+    public @Nullable Integer drawable$RawId;
 
-    public int    width = deaultSize;
-    public int    height = deaultSize;
+    public int    width;
+    public int    height;
 
-    public Emoji(String filter, String assetsPath) {
+    public Emoji(String filter, String assetsPath, int width, int height) {
         this.filter = filter;
         this.assetsPath = assetsPath;
+        this.width = width;
+        this.height = height;
     }
 
-    public Emoji(String filter, Integer drawable$RawId) {
+    public Emoji(String filter, Integer drawable$RawId, int width, int height) {
         this.filter = filter;
         this.drawable$RawId = drawable$RawId;
+        this.width = width;
+        this.height = height;
     }
 }

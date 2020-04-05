@@ -1,4 +1,4 @@
-package com.actor.chatlayout.bean;
+package com.actor.chatlayout.utils;
 
 /**
  * Description: 默认表情列表

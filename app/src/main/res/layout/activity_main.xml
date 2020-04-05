@@ -13,7 +13,7 @@
         android:background="@color/colorPrimary"
         android:gravity="center"
         android:text="Title"
-        android:textColor="@color/white_for_chat_layout"
+        android:textColor="@color/white"
         android:textSize="18sp" />
 
     <FrameLayout

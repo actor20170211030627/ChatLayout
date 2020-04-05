@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.actor.chatlayout.weight.RatioLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    app:ratio="1">
 
-    <View
-        android:id="@+id/vvvvvvvvvvv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!--宽度0.6, 宽高比1:1-->
     <ImageView
         android:id="@+id/iv_item_for_chat_layout_emoji_fragment"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        app:layout_constraintBottom_toBottomOf="@id/vvvvvvvvvvv"
-        app:layout_constraintHeight_percent="1"
-        app:layout_constraintLeft_toLeftOf="@id/vvvvvvvvvvv"
-        app:layout_constraintRight_toRightOf="@id/vvvvvvvvvvv"
-        app:layout_constraintTop_toTopOf="@id/vvvvvvvvvvv"
-        app:layout_constraintWidth_percent="0.75"
-        tools:src="@drawable/emoji_default" />
-</android.support.constraint.ConstraintLayout>
+        android:scaleType="centerCrop"
+        tools:src="@drawable/face_delete" />
+</com.actor.chatlayout.weight.RatioLayout>

@@ -2,9 +2,10 @@ package com.actor.chatlayout.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.actor.chatlayout.ChatLayoutKit;
 import com.actor.chatlayout.bean.Emoji;
 import com.actor.myandroidframework.utils.ThreadUtils;
+import com.blankj.utilcode.util.ImageUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +33,12 @@ import java.util.regex.Pattern;
  */
 public class FaceManager {
 
-    protected static final Context     context             = ChatLayoutKit.context;
-    protected static final List<Emoji> emojiList           = new ArrayList<>();//Emoji列表
+    protected static final Context     context   = ChatLayoutKit.context;
+    protected static final List<Emoji> emojiList = new ArrayList<>();//Emoji列表
+
+    //设置 Emoji, 用于显示在下方TabLayout内
+    public static Integer  emojiResShowInTabLayout;
+    public static Drawable emojiDrawableShowInTabLayout;
 
     /**
      * 默认表情的正则:
@@ -44,12 +50,13 @@ public class FaceManager {
     public static          String      EMOJI_REGEX;//你加载的Emoji的正则
 
     /**
-     * 从assets文件夹中加载Emojis, 加载的Emoji是无序的
+     * 从 assets 文件夹中加载 Emojis, 加载的Emoji是无序的
      * @param regex 表情的匹配正则, 用于读取表情的输入意思, 示例: "[龇牙]" 的匹配是 {@link #DEFAULT_EMOJI_REGEX}
      * @param assetPathName 表情在assets下路径, 示例: "emoji"(表情在这个文件夹内)
      * @param listener 加载完成监听
      */
-    public static void loadEmojisFromAssets(String regex, String assetPathName, OnLoadCompleteListener listener) {
+    public static void loadEmojisFromAssets(String regex, String assetPathName, int width,
+                                            int height, OnLoadCompleteListener listener) {
         if (listener == null) return;
         ThreadUtils.runOnSubThread(new Runnable() {
             @Override
@@ -66,7 +73,7 @@ public class FaceManager {
                             if (m.find()) {
                                 String emojiName = m.group();//匹配到的第一组 "[龇牙]"
                                 //"[龇牙]", "emoji/[龇牙]@2x.png"
-                                Emoji emoji1 = new Emoji(emojiName, assetPathName + "/" + emoji);
+                                Emoji emoji1 = new Emoji(emojiName, assetPathName + "/" + emoji, width, height);
                                 emojiList.add(emoji1);
                             }
                         }
@@ -81,12 +88,13 @@ public class FaceManager {
     }
 
     /**
-     * 从assets文件夹中加载Emojis, 根据 emojiFilters 排序
+     * 从 assets 文件夹中加载 Emojis, 根据 emojiFilters 排序
      * @param emojiNames emoji表情名称列表, 用于从Assets中读取Emoji后排序, 示例: "[龇牙]"
      * @param assetPathName 表情在assets下路径, 示例: "emoji"(表情在这个文件夹内)
      * @param listener 加载完成监听
      */
-    public static void loadEmojisFromAssets(List<String> emojiNames, String assetPathName, OnLoadCompleteListener listener) {
+    public static void loadEmojisFromAssets(List<String> emojiNames, String assetPathName,
+                                            int width, int height, OnLoadCompleteListener listener) {
         if (listener == null) return;
         ThreadUtils.runOnSubThread(new Runnable() {
             @Override
@@ -101,7 +109,7 @@ public class FaceManager {
                             for (String emoji : emojis) {//emoji图片表情名称: "[龇牙]@2x.png"
                                 if (emoji.contains(emojiName)) {
                                     //"[龇牙]", "emoji/[龇牙]@2x.png"
-                                    Emoji emoji1 = new Emoji(emojiName, assetPathName + "/" + emoji);
+                                    Emoji emoji1 = new Emoji(emojiName, assetPathName + "/" + emoji, width, height);
                                     emojiList.add(emoji1);
                                 }
                             }
@@ -114,6 +122,28 @@ public class FaceManager {
                 }
             }
         });
+    }
+
+    /**
+     * 从 drawable/raw 中加载Emojis, 根据 emojiFilters 排序
+     * @param emojiNames emoji表情名称列表, 示例: "[龇牙]"
+     * @param emojiRess Emoji 在 drawable/rwa 里的resId, 示例: R.drawable.emoji_haha
+     * @param width Emoji 宽度
+     * @param height Emoji 高度
+     * @param listener 加载完成监听
+     */
+    public static void loadEmojiFromDrawable$Raw(@NonNull List<String> emojiNames,
+                                                 @NonNull List<Integer> emojiRess,
+                                                 int width, int height,
+                                                 @NonNull OnLoadCompleteListener listener) {
+        //注意: 2个List都不能为空
+        int size = Math.min(emojiNames.size(), emojiRess.size());
+        List<Emoji> emojiList = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            Emoji emoji = new Emoji(emojiNames.get(i), emojiRess.get(i), width, height);
+            emojiList.add(emoji);
+        }
+        listener.onLoadComplete(emojiList);
     }
 
     public interface OnLoadCompleteListener {
@@ -144,8 +174,10 @@ public class FaceManager {
                     Bitmap bitmap = null;
                     if (emoji.assetsPath != null) {//assets
                         bitmap = assets2Bitmap(emoji.assetsPath);
+                        bitmap = ImageUtils.scale(bitmap, emoji.width, emoji.height, true);
                     } else if (emoji.drawable$RawId != null) {//drawable / raw
-                        bitmap = BitmapFactory.decodeResource(context.getResources(), emoji.drawable$RawId);
+                        bitmap = ImageUtils.getBitmap(emoji.drawable$RawId);
+                        bitmap = ImageUtils.scale(bitmap, emoji.width, emoji.height, true);
                     }
                     if (bitmap != null) {
                         //转换为Span, SPAN_INCLUSIVE_EXCLUSIVE: 2个Span之间不能输入文字...
@@ -164,7 +196,7 @@ public class FaceManager {
     }
 
     /** Assets转Bitmap
-     * @param assetsPath 在assets中的路径, 示例: emoji/[龇牙]@2x.png
+     * @param assetsPath 在assets中的路径, 示例: "emoji/[龇牙]@2x.png"
      */
     public static Bitmap assets2Bitmap(String assetsPath) {
         AssetManager am = context.getAssets();
@@ -177,39 +209,6 @@ public class FaceManager {
         return BitmapFactory.decodeStream(is);
     }
 
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////
-    public static Bitmap decodeSampledBitmapFromResource(int resId, int reqWidth, int reqHeight) {
-        Resources res = context.getResources();
-        // 第一次解析将inJustDecodeBounds设置为true，来获取图片大小
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-        // 调用上面定义的方法计算inSampleSize值
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        // 使用获取到的inSampleSize值再次解析图片
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // 源图片的高度和宽度
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-        if (height > reqHeight || width > reqWidth) {
-            // 计算出实际宽高和目标宽高的比率
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            // 选择宽和高中最小的比率作为inSampleSize的值，这样可以保证最终图片的宽和高
-            // 一定都会大于等于目标的宽和高。
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        return inSampleSize;
-    }
-
     /**
      * 如果你加载了默认表情, 返回默认加载的表情列表
      */
@@ -219,36 +218,14 @@ public class FaceManager {
 
     /**
      * 设置表情列表
+     * @param list Emoji表情列表
+     * @param regex 加载的这些表情的正则识别
      */
-    public static void setEmojiList(List<Emoji> list, boolean defaultEmoji, String regex) {
+    public static void setEmojiList(List<Emoji> list, String regex) {
         if (list != null) {
-            if (defaultEmoji) {
-                emojiList.clear();
-                emojiList.addAll(list);
-            } else {
-                // TODO: 2020/4/4
-            }
+            emojiList.clear();
+            emojiList.addAll(list);
             EMOJI_REGEX = regex;
         }
     }
-
-//    public static List<FaceGroup> getCustomFaceList() {
-//        return customFace;
-//    }
-//
-//    public static Bitmap getCustomBitmap(int groupId, String name) {
-//        for (int i = 0; i < customFace.size(); i++) {
-//            FaceGroup group = customFace.get(i);
-//            if (group.groupId == groupId) {
-//                ArrayList<Emoji> faces = group.faces;
-//                for (int j = 0; j < faces.size(); j++) {
-//                    Emoji face = faces.get(j);
-//                    if (face.filter.equals(name)) {
-//                        return face.icon;
-//                    }
-//                }
-//            }
-//        }
-//        return null;
-//    }
 }

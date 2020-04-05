@@ -1,10 +1,12 @@
 package com.actor.chatlayout;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
-import com.actor.chatlayout.bean.DefaultEmojiList;
 import com.actor.chatlayout.bean.Emoji;
+import com.actor.chatlayout.utils.DefaultEmojiList;
 import com.actor.chatlayout.utils.FaceManager;
+import com.blankj.utilcode.util.ImageUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,10 +29,15 @@ public class ChatLayoutKit {
         context = application;
         if (loadDefaultEmoji) {
             List<String> emojiNames = Arrays.asList(DefaultEmojiList.defaultEmojiList);
-            FaceManager.loadEmojisFromAssets(emojiNames, "emoji", new FaceManager.OnLoadCompleteListener() {
+            FaceManager.loadEmojisFromAssets(emojiNames, "emoji", Emoji.DEAULT_SIZE, Emoji.DEAULT_SIZE,  new FaceManager.OnLoadCompleteListener() {
                 @Override
                 public void onLoadComplete(List<Emoji> emojis) {
-                    FaceManager.setEmojiList(emojis, true, FaceManager.DEFAULT_EMOJI_REGEX);
+                    FaceManager.setEmojiList(emojis, FaceManager.DEFAULT_EMOJI_REGEX);
+
+                    //设置默认Drawable, 用于显示在TabLayout下方
+                    String assetsPath = emojis.get(0).assetsPath;
+                    Bitmap bitmap = FaceManager.assets2Bitmap(assetsPath);
+                    FaceManager.emojiDrawableShowInTabLayout = ImageUtils.bitmap2Drawable(bitmap);
                 }
             });
         }

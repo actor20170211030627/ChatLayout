@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_4597D8_for_chat_layout">#4597D8</color>
-    <color name="blue_2EABFB_for_chat_layout">#2EABFB</color>
-    <color name="white_for_chat_layout">#fff</color>
-
-    <color name="gray_dcdcdc_for_chat_layout">#dcdcdc</color>
-    <color name="gray_6f7378_for_chat_layout">#6f7378</color>
-    <color name="gray_64686c_for_chat_layout">#64686c</color>
+    <color name="gray_6f7378_for_chat_layout">#6F7378</color>
+    <color name="gray_64686c_for_chat_layout">#64686C</color>
 </resources>

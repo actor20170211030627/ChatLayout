@@ -1,5 +1,9 @@
 # ChatLayout
 聊天界面按钮的简单封装...
+ <ul>
+     <li><a href="https://github.com/actor20170211030627/ChatLayout">Github</a></li>
+     <li><a href="https://gitee.com/actor2017/ChatLayout">Gitee码云</a></li>
+ </ul>
 
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
@@ -38,7 +42,7 @@
             android:background="@color/colorPrimary"
             android:gravity="center"
             android:text="Title"
-            android:textColor="@color/white_for_chat_layout"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     
         <FrameLayout
@@ -56,7 +60,7 @@
                 tools:listitem="@layout/item_chat_contact" />
     
             <!--3.按住说话(Hold To Talk)-->
-            <com.actor.chatlayout.VoiceRecorderView
+            <com.actor.myandroidframework.widget.VoiceRecorderView
                 android:id="@+id/voice_recorder"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
@@ -68,10 +72,10 @@
             android:id="@+id/cl_chatLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:clBtnSendBackground=""      //发送按钮背景(Send Button's background), 默认@drawable/selector_btn_send_for_chat_layout(default)
-            app:clIvEmojiVisiable="true"    //表情图片是否显示(emoji image visiable), 默认true(default)
-            app:clIvPlusVisiable="true"     //⊕图片是否显示(⊕ image visiable), 默认true(default)
-            app:clIvVoiceVisiable="true" /> //语音图片是否显示(voice image visiable), 默认true(default)
+            app:clBtnSendBackground=""  //发送按钮背景(Send Button's background), 默认@drawable/selector_btn_send_for_chat_layout(default)
+            app:clIvEmojiVisiable=""    //表情图片是否显示(emoji image visiable), 默认visible(default)
+            app:clIvPlusVisiable=""     //⊕图片是否显示(⊕ image visiable), 默认visible(default)
+            app:clIvVoiceVisiable="" /> //语音图片是否显示(voice image visiable), 默认visible(default)
     </LinearLayout>
 
 **3.** Activity中
@@ -101,34 +105,37 @@
             }
         });
         chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
-        
+        //set Tab1 Icon
+		chatLayout.getTabLayout().getTabAt(1).setIcon(R.drawable.picture);
+
         chatLayout.setOnListener(new OnListener() {
             
             //点击了"发送"按钮(Send Button Click)
             @Override
             public void onBtnSendClick(EditText etMsg) {
-                String msg = etMsg.getText().toString().trim();
-                toast(msg);
+                String msg = getText(etMsg);
+				if (!TextUtils.isEmpty(msg)) {
+				    etMsg.setText("");
+				    chatListAdapter.addData(msg);
+				    recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
+				}
             }
 
             //点击了"表情"按钮, 你可以不重写这个方法(overrideAble)
             @Override
             public void onIvEmojiClick(ImageView ivEmoji) {
-                super.onIvEmojiClick(ivEmoji);
                 toast("Emoji Click");
             }
 
             //点击了"⊕"按钮, 你可以不重写这个方法(overrideAble)
             @Override
             public void onIvPlusClick(ImageView ivPlus) {
-                super.onIvPlusClick(ivPlus);
                 toast("Plus Click");
             }
 
             //没语音权限, 你可以不重写这个方法(no voice record permissions, overrideAble)
             @Override
             public void onNoPermission(String permission) {
-                super.onNoPermission(permission);
                 //可以调用默认处理方法. 你也可以不调用这个方法, 自己处理(call default request permission method, or deal by yourself)
                 chatLayout.showPermissionDialog();
             }
@@ -136,14 +143,13 @@
             //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                super.onVoiceRecordSuccess(audioPath, durationMs);
                 toast(String.format(Locale.getDefault(), "audioPath=%s, durationMs=%d", audioPath, durationMs));
             }
 
             //录音失败, 你可以不重写这个方法(voice record failure, overrideAble)
             @Override
             public void onVoiceRecordError(Exception e) {
-                super.onVoiceRecordError(e);
+                e.printStackTrace();
             }
 
             //还可重写其它方法(you can override other methods ...)
@@ -197,13 +203,6 @@ Add it in your root build.gradle at the end of repositories:
         //https://github.com/actor20170211030627/ChatLayout
         implementation 'com.github.actor20170211030627:ChatLayout:version'
     }
-
-## TODO
-<ol>
-    <li>增加<code>raw/drawable</code>等方式添加自定义表情</li>
-    <li>修改☺和⊕点击后键盘显示逻辑问题</li>
-    <li>考虑对EditText.setFilters的方式监听Emoji输入</li>
-</ol>
 
 ## Thanks
 <ul>

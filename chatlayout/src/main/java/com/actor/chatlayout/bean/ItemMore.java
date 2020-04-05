@@ -10,9 +10,9 @@ import android.os.Parcelable;
  */
 public class ItemMore implements Parcelable {
 
-    public int itemIcon;
-    public String itemIconUrl;
-    public String itemText;
+    public int itemIcon;//Item 的 resId
+    public String itemIconUrl;//Item图标地址
+    public String itemText;//Item名称
 
     /**
      * @param itemIconUrl 图标地址

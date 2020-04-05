@@ -89,7 +89,7 @@
                 android:layout_gravity="center"
                 android:background="@drawable/selector_btn_send_for_chat_layout"
                 android:text="发送"
-                android:textColor="@color/white_for_chat_layout"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:visibility="gone"
                 tools:visibility="visible" />

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,5 +10,4 @@
     app:spanCount="4"
     tools:context=".fragment.MoreFragment"
     tools:itemCount="8"
-    tools:listitem="@layout/item_chat_bottom">
-</android.support.v7.widget.RecyclerView>
+    tools:listitem="@layout/item_chat_bottom" />

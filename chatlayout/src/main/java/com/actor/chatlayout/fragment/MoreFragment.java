@@ -8,11 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.actor.chatlayout.R;
 import com.actor.chatlayout.bean.ItemMore;
 import com.actor.myandroidframework.fragment.ActorBaseFragment;
 import com.actor.myandroidframework.widget.BaseItemDecoration;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -31,15 +33,15 @@ public class MoreFragment extends ActorBaseFragment {
     public static final String              ITEMS = "ITEMS";
     private             int                 spanCount;
     private             int                 itemDecorationPx;
+    private             RecyclerView        recyclerView;
     private             ArrayList<ItemMore> items;
     private             OnItemClickListener mListener;
-    private             RecyclerView        recyclerView;
     private             MoreAdapter         moreAdapter;
 
     /**
      * 获取实例
-     * @param spanCount recyclerview 行数, 一般4行
-     * @param itemDecorationPx item间距, 单位px
+     * @param spanCount recyclerview 列数, 一般4列
+     * @param itemDecorationPx item间距, 单位px, 比如: 50
      * @param items 填充到 recyclerview 中的数据
      */
     public static MoreFragment newInstance(int spanCount, int itemDecorationPx, ArrayList<ItemMore> items) {
@@ -104,7 +106,8 @@ public class MoreFragment extends ActorBaseFragment {
         }
         @Override
         protected void convert(@NonNull BaseViewHolder helper, ItemMore item) {
-            helper.setText(R.id.tv, item.itemText).setImageResource(R.id.iv, item.itemIcon);
+            ImageView iv = helper.setText(R.id.tv, item.itemText).getView(R.id.iv);
+            Glide.with(iv).load(item.itemIcon).into(iv);
         }
     }
 

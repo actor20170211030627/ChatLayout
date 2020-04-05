@@ -10,18 +10,16 @@ package com.chatlayout.example.utils;
  */
 public class Global {
 
-    //必须GET
-    public static final String CHECK_UPDATE = "https://raw.githubusercontent.com/" +
-            "actor20170211030627/" +
-            "ChatLayout" +//项目名
-            "/master/" +
-            "app" +//模块名
+    public static final String CHECK_UPDATE = "https://gitee.com/actor2017/" +
+            "ChatLayout" +
+            "/raw/master/" +
+            "app" +
             "/build/outputs/apk/debug/output.json";
 
     public static final String DOWNLOAD_URL = "https://raw.githubusercontent.com/" +
             "actor20170211030627/" +
-            "ChatLayout" +//项目名
+            "ChatLayout" +
             "/master/" +
-            "app" +//模块名
+            "app" +
             "/build/outputs/apk/debug/app-debug.apk";
 }

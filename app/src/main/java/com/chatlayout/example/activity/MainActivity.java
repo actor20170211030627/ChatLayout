@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.chat_layout)
     ChatLayout        chatLayout;
 
-    private ChatListAdapter     mAdapter;
+    private ChatListAdapter     chatListAdapter;
     private List<String>        items           = new ArrayList<>();
     private ArrayList<ItemMore> bottomViewDatas = new ArrayList<>();
 
@@ -65,59 +65,66 @@ public class MainActivity extends BaseActivity {
             }
         });
         chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
+        //set Tab1 Icon
+        chatLayout.getTabLayout().getTabAt(1).setIcon(R.drawable.picture);
 
         chatLayout.setOnListener(new OnListener() {
+
+            //点击了"发送"按钮(Send Button Click)
             @Override
             public void onBtnSendClick(EditText etMsg) {
-                String msg = etMsg.getText().toString().trim();
+                String msg = getText(etMsg);
                 if (!TextUtils.isEmpty(msg)) {
                     etMsg.setText("");
-                    mAdapter.addData(msg);
-                    recyclerview.scrollToPosition(mAdapter.getItemCount() - 1);
+                    chatListAdapter.addData(msg);
+                    recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
                 }
             }
 
+            //点击了"表情"按钮, 你可以不重写这个方法(overrideAble)
             @Override
             public void onIvEmojiClick(ImageView ivEmoji) {
-                super.onIvEmojiClick(ivEmoji);
                 toast("Emoji Click");
             }
 
+            //点击了"⊕"按钮, 你可以不重写这个方法(overrideAble)
             @Override
             public void onIvPlusClick(ImageView ivPlus) {
-                super.onIvPlusClick(ivPlus);
                 toast("Plus Click");
             }
 
+            //没语音权限, 你可以不重写这个方法(no voice record permissions, overrideAble)
             @Override
-            public void onNoPermission(String permission) {//没权限
-                super.onNoPermission(permission);
+            public void onNoPermission(String permission) {
+                //可以调用默认处理方法. 你也可以不调用这个方法, 自己处理(call default request permission method, or deal by yourself)
                 chatLayout.showPermissionDialog();
             }
 
+            //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                super.onVoiceRecordSuccess(audioPath, durationMs);
-                mAdapter.addData(String.format(Locale.getDefault(), "audioPath=%s, " +
+                chatListAdapter.addData(String.format(Locale.getDefault(), "audioPath=%s, " +
                         "durationMs=%d", audioPath, durationMs));
-                recyclerview.scrollToPosition(mAdapter.getItemCount() - 1);
+                recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
             }
 
+            //录音失败, 你可以不重写这个方法(voice record failure, overrideAble)
             @Override
             public void onVoiceRecordError(Exception e) {//录音失败
-                super.onVoiceRecordError(e);
+                e.printStackTrace();
             }
 
             //还可重写其它方法override other method ...
         });
-        mAdapter = new ChatListAdapter(items);
-        mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+
+        chatListAdapter = new ChatListAdapter(items);
+        chatListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 toast(items.get(position));
             }
         });
-        recyclerview.setAdapter(mAdapter);
+        recyclerview.setAdapter(chatListAdapter);
     }
 
     /**
