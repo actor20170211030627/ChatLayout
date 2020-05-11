@@ -2,7 +2,7 @@
 聊天界面按钮的简单封装...
  <ul>
      <li><a href="https://github.com/actor20170211030627/ChatLayout">Github</a></li>
-     <li><a href="https://gitee.com/actor2017/ChatLayout">Gitee码云</a></li>
+     <li><a href="https://gitee.com/actor20170211030627/ChatLayout">Gitee码云(国内网速更快)</a></li>
  </ul>
 
 [![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)

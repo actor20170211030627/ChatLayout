@@ -10,7 +10,7 @@ package com.chatlayout.example.utils;
  */
 public class Global {
 
-    public static final String CHECK_UPDATE = "https://gitee.com/actor2017/" +
+    public static final String CHECK_UPDATE = "https://gitee.com/actor20170211030627/" +
             "ChatLayout" +
             "/raw/master/" +
             "app" +

@@ -88,7 +88,7 @@ public class ChatLayout extends LinearLayout {
     protected int ivPlusVisiable;
     protected OnListener onListener;
     //键盘高度, 经我的手机测试: 手写:478 语音:477 26键:831
-    protected static final String KEYBOARD_HEIGHT = "KEYBOARD_HEIGHT_FOR_CHAT_LAYOUT";
+    public static final String KEYBOARD_HEIGHT = "KEYBOARD_HEIGHT_FOR_ACTOR_APPLICATION";
 
     protected boolean                    audioRecordIsCancel;//语音录制是否已取消
     protected float                      startRecordY;//按下时的y坐标
