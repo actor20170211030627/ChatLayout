@@ -13,14 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -38,30 +30,36 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import com.actor.chatlayout.bean.Emoji;
 import com.actor.chatlayout.fragment.ChatLayoutEmojiFragment;
 import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.chatlayout.utils.FaceManager;
-import com.actor.myandroidframework.adapter.BaseFragmentStatePagerAdapter;
+import com.actor.myandroidframework.adapter_viewpager.BaseFragmentStatePagerAdapter;
 import com.actor.myandroidframework.utils.SPUtils;
 import com.actor.myandroidframework.utils.audio.AudioUtils;
 import com.actor.myandroidframework.widget.VoiceRecorderView;
 import com.blankj.utilcode.util.KeyboardUtils;
+import com.google.android.material.tabs.TabLayout;
 
 /**
- * description: 聊天控件,封装几个按钮及事件,包含:
+ * description: 聊天控件, 包括几个按钮及事件:
  *              1.语音按钮
  *              2.EditText
  *              3.Emoji按钮
  *              4.发送按钮
  *              5.⊕按钮
- * 注意★★★: 应该重写onBackPressed方法, 示例:
- * @Override
- * public void onBackPressed() {
- *     if (chatLayout.isBottomViewGone()) {
- *         super.onBackPressed();//自己页面的逻辑
- *     }
- * }
+ * 使用示例:
+ *  1.布局文件layout: https://gitee.com/actor20170211030627/ChatLayout/blob/master/app/src/main/res/layout/activity_main.xml
+ *  2.Activity中: https://gitee.com/actor20170211030627/ChatLayout/blob/master/app/src/main/java/com/chatlayout/example/activity/MainActivity.java
+ *
  * author     : 李大发
  * date       : 2018/8/2 on 16:16
  * @version 1.0
@@ -79,8 +77,9 @@ public class ChatLayout extends LinearLayout {
     protected ViewPager    viewPager;//下方的ViewPager
     protected TabLayout    tabLayout;
 
-    protected @Nullable RecyclerView recyclerView;//上面列表RecyclerView
-    protected @Nullable VoiceRecorderView       voiceRecorderView;//按住说话
+    protected @Nullable RecyclerView      recyclerView;//上面列表RecyclerView
+    protected @Nullable
+    VoiceRecorderView voiceRecorderView;//按住说话
 
     protected InputMethodManager imm;//虚拟键盘(输入法)
     protected int ivVoiceVisiable;
@@ -141,7 +140,9 @@ public class ChatLayout extends LinearLayout {
             ivEmoji.setVisibility(ivEmojiVisiable);//表情按钮是否显示
             ivSendPlus.setVisibility(ivPlusVisiable);//设置右边⊕号是否显示
             btnSend.setVisibility(ivPlusVisiable == VISIBLE ? GONE : VISIBLE);//发送按钮
-            if (background != null) btnSend.setBackground(background);//背景
+            if (background != null) {
+                btnSend.setBackground(background);//背景
+            }
         }
         //监听布局变化
         KeyboardUtils.registerSoftInputChangedListener((Activity) context, new KeyboardUtils.OnSoftInputChangedListener() {
@@ -179,11 +180,15 @@ public class ChatLayout extends LinearLayout {
                         case MotionEvent.ACTION_UP:
                             float endY = event.getY();
                             if (Math.abs(endY - startY) < 15) {//点击
-                                if (onListener != null) onListener.onRecyclerViewTouchListener(v, event);
+                                if (onListener != null) {
+                                    onListener.onRecyclerViewTouchListener(v, event);
+                                }
                                 etMsg.clearFocus();
                                 setKeyBoardVisiable(false);
                                 viewPager.setVisibility(GONE);
                             }
+                            break;
+                        default:
                             break;
                     }
                     return false;
@@ -196,7 +201,9 @@ public class ChatLayout extends LinearLayout {
         int keyboardHeight = SPUtils.getInt(KEYBOARD_HEIGHT, 831);
         setViewPagerHeight(keyboardHeight);
         viewPager.setVisibility(GONE);
-        if (voiceRecorderView != null) voiceRecorderView.setVisibility(GONE);
+        if (voiceRecorderView != null) {
+            voiceRecorderView.setVisibility(GONE);
+        }
     }
 
     /**
@@ -244,7 +251,9 @@ public class ChatLayout extends LinearLayout {
                             int start = etMsg.getSelectionStart();
                             int end = etMsg.getSelectionEnd();
                             Editable editable = etMsg.getText();
-                            if (start != end) editable.delete(start, end);//已选中
+                            if (start != end) {
+                                editable.delete(start, end);//已选中
+                            }
                             editable.insert(start, emoji.filter);
                             FaceManager.handlerEmojiText(etMsg, FaceManager.EMOJI_REGEX, editable);
                         }
@@ -281,7 +290,9 @@ public class ChatLayout extends LinearLayout {
         ivVoice.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onListener != null) onListener.onIvVoiceClick(ivVoice);
+                if (onListener != null) {
+                    onListener.onIvVoiceClick(ivVoice);
+                }
                 //如果不设置这句,别的应用再切换过来的时候,键盘会跳出来
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 v.setVisibility(GONE);
@@ -304,14 +315,18 @@ public class ChatLayout extends LinearLayout {
         ivKeyboard.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onListener != null) onListener.onIvKeyBoardClick(ivKeyboard);
+                if (onListener != null) {
+                    onListener.onIvKeyBoardClick(ivKeyboard);
+                }
                 v.setVisibility(GONE);
                 ivVoice.setVisibility(VISIBLE);
                 tvPressSpeak.setVisibility(GONE);
                 etMsg.setVisibility(VISIBLE);
                 flParent.setVisibility(VISIBLE);
                 //如果ivPlus不显示 或者 EditText里有字,都要显示发送按钮
-                if (ivPlusVisiable != VISIBLE || etMsg.getText().toString().length() > 0) btnSend.setVisibility(VISIBLE);
+                if (ivPlusVisiable != VISIBLE || etMsg.getText().toString().length() > 0) {
+                    btnSend.setVisibility(VISIBLE);
+                }
                 etMsg.requestFocus();
                 // 输入法弹出之后，重新调整
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -344,26 +359,35 @@ public class ChatLayout extends LinearLayout {
                                     AudioUtils.getInstance().startRecord(new AudioUtils.AudioRecordCallback() {
 
                                         @Override
-                                        public void recordComplete(String audioPath,
-                                                                   long durationMs) {
+                                        public void recordComplete(String audioPath, long durationMs) {
                                             if (audioRecordIsCancel) {
-                                                voiceRecorderView.stopRecording();
+                                                voiceRecorderView.stopRecording(View.GONE);
                                                 return;
                                             }
                                             if (durationMs < 500) {
+                                                audioRecordIsCancel = true;
                                                 voiceRecorderView.tooShortRecording();
+                                                voiceRecorderView.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (audioRecordIsCancel && voiceRecorderView != null) {
+                                                            voiceRecorderView.stopRecording(View.GONE);
+                                                        }
+                                                    }
+                                                }, 500);
                                                 return;
                                             }
-                                            voiceRecorderView.stopRecording();
-                                            String recordAudioPath =//语音路径
-                                                    AudioUtils.getInstance().getRecordAudioPath();
-                                            if (!TextUtils.isEmpty(recordAudioPath))
+                                            voiceRecorderView.stopRecording(View.GONE);
+                                            //语音路径
+                                            String recordAudioPath = AudioUtils.getInstance().getRecordAudioPath();
+                                            if (!TextUtils.isEmpty(recordAudioPath)) {
                                                 onListener.onVoiceRecordSuccess(recordAudioPath, durationMs);
+                                            }
                                         }
 
                                         @Override
                                         public void recordCancel(String audioPath, long durationMs) {
-                                            voiceRecorderView.stopRecording();
+                                            voiceRecorderView.stopRecording(View.GONE);
                                         }
 
                                         @Override
@@ -371,7 +395,7 @@ public class ChatLayout extends LinearLayout {
                                             post(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    voiceRecorderView.stopRecording();
+                                                    voiceRecorderView.stopRecording(View.GONE);
                                                     onListener.onVoiceRecordError(e);
                                                 }
                                             });
@@ -383,8 +407,11 @@ public class ChatLayout extends LinearLayout {
                                         audioRecordIsCancel = true;
                                         voiceRecorderView.release2CancelRecording();//松开手指取消发送
                                     } else {
-                                        audioRecordIsCancel = false;
-                                        voiceRecorderView.startRecording();//开始录音
+                                        //如果release2CancelRecording(), 再重新startRecording(), 否则会一直调startRecording().
+                                        if (audioRecordIsCancel) {
+                                            audioRecordIsCancel = false;
+                                            voiceRecorderView.startRecording();//开始录音
+                                        }
                                     }
                                     break;
                                 case MotionEvent.ACTION_UP:
@@ -394,6 +421,8 @@ public class ChatLayout extends LinearLayout {
 //                                        audioRecordIsCancel = false;
 //                                    }
                                     AudioUtils.getInstance().stopRecord(audioRecordIsCancel);
+                                    break;
+                                default:
                                     break;
                             }
                         }
@@ -408,7 +437,9 @@ public class ChatLayout extends LinearLayout {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 v.onTouchEvent(event);
-                if (onListener != null) onListener.onEditTextToucn(etMsg, event);
+                if (onListener != null) {
+                    onListener.onEditTextToucn(etMsg, event);
+                }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (viewPager.getVisibility() != GONE) {
                         setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
@@ -417,7 +448,9 @@ public class ChatLayout extends LinearLayout {
                         @Override
                         public void run() {
                             recyclerViewScroll2Last(300);
-                            if (viewPager != null) viewPager.setVisibility(View.GONE);
+                            if (viewPager != null) {
+                                viewPager.setVisibility(View.GONE);
+                            }
                             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                         }
                     }, 250); // 延迟一段时间，等待输入法完全弹出
@@ -465,7 +498,9 @@ public class ChatLayout extends LinearLayout {
         btnSend.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onListener != null) onListener.onBtnSendClick(etMsg);
+                if (onListener != null) {
+                    onListener.onBtnSendClick(etMsg);
+                }
             }
         });
 
@@ -519,7 +554,9 @@ public class ChatLayout extends LinearLayout {
 
     //当 表情 or Plus按钮点击的时候
     protected void onEmoji$PlusClicked(boolean isClickEmoji) {
-        if (ivVoiceVisiable == VISIBLE) ivVoice.setVisibility(VISIBLE);
+        if (ivVoiceVisiable == VISIBLE) {
+            ivVoice.setVisibility(VISIBLE);
+        }
         ivKeyboard.setVisibility(GONE);
         etMsg.setVisibility(VISIBLE);
         tvPressSpeak.setVisibility(GONE);
@@ -527,7 +564,9 @@ public class ChatLayout extends LinearLayout {
         int selectedTabPosition = tabLayout.getSelectedTabPosition();
         //切换到某个Fragment
         TabLayout.Tab tabAt = tabLayout.getTabAt(isClickEmoji ? 0 : 1);
-        if (tabAt != null) tabAt.select();
+        if (tabAt != null) {
+            tabAt.select();
+        }
 
         //如果ivPlust不显示 or EditText里有内容
         if (ivPlusVisiable != VISIBLE || etMsg.getText().toString().length() > 0) {

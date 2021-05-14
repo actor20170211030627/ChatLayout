@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="MyRatioLayoutAttrs">
-
-        <!--ratio属性:设置 宽/高 的比例-->
-        <attr name="ratio" format="float" />
-
-    </declare-styleable>
-</resources>

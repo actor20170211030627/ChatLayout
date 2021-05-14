@@ -1,28 +1,23 @@
 package com.chatlayout.example.activity;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.actor.chatlayout.ChatLayout;
 import com.actor.chatlayout.OnListener;
 import com.actor.chatlayout.bean.ItemMore;
 import com.actor.chatlayout.fragment.MoreFragment;
-import com.actor.chatlayout.utils.FaceManager;
 import com.actor.myandroidframework.widget.VoiceRecorderView;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.chatlayout.example.R;
+import com.chatlayout.example.adapter.ChatListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,9 +31,8 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.chat_layout)
     ChatLayout        chatLayout;
 
-    private ChatListAdapter     chatListAdapter;
-    private List<String>        items           = new ArrayList<>();
-    private ArrayList<ItemMore> bottomViewDatas = new ArrayList<>();
+    private       ChatListAdapter chatListAdapter;
+    private final ArrayList<ItemMore> bottomViewDatas = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +40,13 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        chatListAdapter = new ChatListAdapter();
+        List<String> items = chatListAdapter.getData();
         for (int i = 0; i < 20; i++) {
             items.add("Hello World!    " + i);
         }
+        recyclerview.setAdapter(chatListAdapter);
+
         for (int i = 0; i < 8; i++) {
             boolean flag = i % 2 == 0;
             int imgRes = flag ? R.drawable.camera : R.drawable.picture;
@@ -103,8 +101,7 @@ public class MainActivity extends BaseActivity {
             //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                chatListAdapter.addData(String.format(Locale.getDefault(), "audioPath=%s, " +
-                        "durationMs=%d", audioPath, durationMs));
+                chatListAdapter.addData(getStringFormat("audioPath=%s, durationMs=%d", audioPath, durationMs));
                 recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
             }
 
@@ -116,31 +113,6 @@ public class MainActivity extends BaseActivity {
 
             //还可重写其它方法override other method ...
         });
-
-        chatListAdapter = new ChatListAdapter(items);
-        chatListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                toast(items.get(position));
-            }
-        });
-        recyclerview.setAdapter(chatListAdapter);
-    }
-
-    /**
-     * 聊天列表的Adapter
-     */
-    public class ChatListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
-
-        public ChatListAdapter(@Nullable List<String> data) {
-            super(R.layout.item_chat_contact, data);
-        }
-
-        @Override
-        protected void convert(@NonNull BaseViewHolder helper, String item) {
-            TextView tv = helper.addOnClickListener(R.id.tv).getView(R.id.tv);
-            FaceManager.handlerEmojiText(tv, FaceManager.EMOJI_REGEX, item);
-        }
     }
 
     /**
@@ -148,6 +120,8 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     public void onBackPressed() {
-        if (chatLayout.isBottomViewGone()) super.onBackPressed();
+        if (chatLayout.isBottomViewGone()) {
+            super.onBackPressed();
+        }
     }
 }

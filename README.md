@@ -1,24 +1,17 @@
-# ChatLayout
-聊天界面按钮的简单封装...
- <ul>
-     <li><a href="https://github.com/actor20170211030627/ChatLayout">Github</a></li>
-     <li><a href="https://gitee.com/actor20170211030627/ChatLayout">Gitee码云(国内网速更快)</a></li>
- </ul>
+## ChatLayout
+> <a href="https://github.com/actor20170211030627/ChatLayout"><s>Github(网速慢,不再维护 Deprecated)</s></a> <br/>
+> <a href="https://gitee.com/actor20170211030627/ChatLayout">Gitee码云(国内网速更快)</a>
 
-[![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+## 聊天界面按钮的简单封装...
 
-## Screenshot
-#### 1.chatlayout ↓
+## 1.Screenshot
 <img src="captures/chatlayout.png" width=35%></img>
-
-#### 2.example gif
 <img src="captures/example.gif" width=35%></img>
 
-## Demo
-<a href="https://github.com/actor20170211030627/ChatLayout/raw/master/app/build/outputs/apk/debug/app-debug.apk">download apk</a> or scan qrcode:  <br/>
-<img src="captures/qrcode.png" width=35%></img>
+## 2.Demo
+<a href="app/build/outputs/apk/debug/app-debug.apk">download apk</a>
 
-## Usage
+## 3.Usage
 **1.** 在Application中初始化
 
     ChatLayoutKit.init(getApplication(), true);//初始化
@@ -51,11 +44,11 @@
             android:layout_weight="1">
     
             <!--2.聊天列表(Chat list)-->
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:stackFromEnd="true"
                 tools:listitem="@layout/item_chat_contact" />
     
@@ -143,7 +136,7 @@
             //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                toast(String.format(Locale.getDefault(), "audioPath=%s, durationMs=%d", audioPath, durationMs));
+                toast(getStringFormat("audioPath=%s, durationMs=%d", audioPath, durationMs));
             }
 
             //录音失败, 你可以不重写这个方法(voice record failure, overrideAble)
@@ -156,7 +149,7 @@
             ...
         });
         chatListAdapter = new ChatListAdapter();
-        rvRecyclerview.setAdapter(chatListAdapter);
+        recyclerview.setAdapter(chatListAdapter);
     }
 
     @Override
@@ -165,7 +158,7 @@
     }
 
 
-## How to
+## 4.How to
 To get a Git project into your build:
 
 **Step 1.** Add the JitPack repository to your build file
@@ -181,9 +174,9 @@ Add it in your root build.gradle at the end of repositories:
 </pre>
 
 
-**Step 2.** Add the dependency, the last version:
-[![](https://jitpack.io/v/actor20170211030627/ChatLayout.svg)](https://jitpack.io/#actor20170211030627/ChatLayout)
-
+**Step 2.** Add the dependency, the last version(最新版本):
+<s>Github:</s>[![](https://jitpack.io/v/actor20170211030627/ChatLayout.svg)](https://jitpack.io/#actor20170211030627/ChatLayout) &nbsp; Gitee: [![](https://jitpack.io/v/com.gitee.actor20170211030627/ChatLayout.svg)](https://jitpack.io/#com.gitee.actor20170211030627/ChatLayout)
+<pre>
     android {
       ...
       compileOptions {
@@ -193,22 +186,26 @@ Add it in your root build.gradle at the end of repositories:
     }
 
     dependencies {
-        implementation 'com.android.support:appcompat-v7:your_version'
-        implementation 'com.android.support:recyclerview-v7:your_version'
-        implementation 'com.android.support.constraint:constraint-layout:your_version'
+        implementation 'androidx.constraintlayout:constraintlayout:your_version'
 
-        //https://github.com/actor20170211030627/MyAndroidFrameWork
-        implementation 'com.github.actor20170211030627:MyAndroidFrameWork:1.3.4'
+        //https://gitee.com/actor20170211030627/MyAndroidFrameWork
+        implementation 'com.gitee.actor20170211030627.MyAndroidFrameWork:myandroidframework:2.0.3'
 
-        //https://github.com/actor20170211030627/ChatLayout
-        implementation 'com.github.actor20170211030627:ChatLayout:version'
+        //https://gitee.com/actor20170211030627/ChatLayout
+        implementation 'com.gitee.actor20170211030627:ChatLayout:the_last_gitee_version'
+
+        //https://github.com/actor20170211030627/ChatLayout(Github的旧版本, 非androidx版本, 不推荐)
+        <s>implementation 'com.github.actor20170211030627:ChatLayout:the_last_github_version'</s>
     }
+</pre>
 
-## Thanks
+
+
+## 5.Thanks
 <ul>
     <li>keyboard from: <a href="https://github.com/604982372/InputConflict" target="_blank">604982372/InputConflict</a> </li>
     <li>emoji from: <a href="https://github.com/tencentyun/TIMSDK" target="_blank">tencentyun/TIMSDK</a></li>
 </ul>
 
-## License
- Apache 2.0.
+## 6.License
+[![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * description: 用作初始化, 项目地址: https://github.com/actor20170211030627/ChatLayout
+ * description: 用作初始化, 项目地址: https://gitee.com/actor20170211030627/ChatLayout
  * author     : 李大发
  * date       : 2019/6/3 on 20:45
  * @version 1.0
