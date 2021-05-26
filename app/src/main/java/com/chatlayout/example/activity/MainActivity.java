@@ -15,6 +15,7 @@ import com.actor.chatlayout.fragment.MoreFragment;
 import com.actor.myandroidframework.widget.VoiceRecorderView;
 import com.chatlayout.example.R;
 import com.chatlayout.example.adapter.ChatListAdapter;
+import com.chatlayout.example.info.MessageItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +41,15 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        //消息列表
         chatListAdapter = new ChatListAdapter();
-        List<String> items = chatListAdapter.getData();
+        List<MessageItem> items = chatListAdapter.getData();
         for (int i = 0; i < 20; i++) {
-            items.add("Hello World!    " + i);
+            items.add(new MessageItem("Hello World!    " + i));
         }
         recyclerview.setAdapter(chatListAdapter);
 
+        //右下角⊕More
         for (int i = 0; i < 8; i++) {
             boolean flag = i % 2 == 0;
             int imgRes = flag ? R.drawable.camera : R.drawable.picture;
@@ -74,7 +77,7 @@ public class MainActivity extends BaseActivity {
                 String msg = getText(etMsg);
                 if (!TextUtils.isEmpty(msg)) {
                     etMsg.setText("");
-                    chatListAdapter.addData(msg);
+                    chatListAdapter.addData(new MessageItem(msg));
                     recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
                 }
             }
@@ -101,7 +104,7 @@ public class MainActivity extends BaseActivity {
             //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                chatListAdapter.addData(getStringFormat("audioPath=%s, durationMs=%d", audioPath, durationMs));
+                chatListAdapter.addData(new MessageItem(audioPath, durationMs));
                 recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
             }
 

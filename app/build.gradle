@@ -44,7 +44,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 
     //https://gitee.com/actor20170211030627/MyAndroidFrameWork
-    implementation 'com.gitee.actor20170211030627.MyAndroidFrameWork:myandroidframework:2.0.3'
+    implementation 'com.gitee.actor20170211030627.MyAndroidFrameWork:myandroidframework:2.0.4.1'
 
     //https://gitee.com/actor20170211030627/ChatLayout
     implementation project(':chatlayout')

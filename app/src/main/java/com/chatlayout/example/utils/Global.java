@@ -15,7 +15,7 @@ public class Global {
             "ChatLayout" +
             "/raw/master/" +
             "app" +
-            "/build/outputs/apk/debug/output.json";
+            "/build/outputs/apk/debug/output-metadata.json";
 
     public static final String DOWNLOAD_URL = "https://raw.githubusercontent.com/" +
             "actor20170211030627/" +

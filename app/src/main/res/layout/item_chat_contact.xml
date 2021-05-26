@@ -3,18 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="right|center_vertical"
+    android:gravity="end|center_vertical"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/blue_2EABFB"
-        android:padding="6dp"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        tools:text="Hello World!" />
+        android:layout_weight="1"
+        android:gravity="end">
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_2EABFB"
+            android:padding="6dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="Hello World!" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"

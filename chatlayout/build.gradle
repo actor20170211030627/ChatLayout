@@ -51,5 +51,5 @@ dependencies {
     compileOnly rootProject.ext.dependencies.constraint_layout
 
     //https://gitee.com/actor20170211030627/MyAndroidFrameWork
-    compileOnly 'com.gitee.actor20170211030627:MyAndroidFrameWork:2.0.3'
+    compileOnly 'com.gitee.actor20170211030627:MyAndroidFrameWork:2.0.4.1'
 }
