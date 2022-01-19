@@ -19,7 +19,7 @@ Demo中添加了MyAndroidFrameWork依赖, 里面有一个ChatLayout聊天控件,
 
 **2.** 在Application中初始化
 <pre>
-参考: <a href="app/src/main/java/com/chatlayout/example/Application.java" target="_blank">Application</a>
+参考: <a href="app/src/main/java/com/chatlayout/example/MyApplication.java" target="_blank">MyApplication.java</a>
 </pre>
 
 **3.** 布局文件中xml
