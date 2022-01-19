@@ -2,33 +2,26 @@ package com.chatlayout.example.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.AppUtils;
-import com.chatlayout.example.R;
+import com.chatlayout.example.databinding.ActivityLoginBinding;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-public class LoginActivity extends BaseActivity {
-
-    @BindView(R.id.tv_version)
-    TextView tvVersion;
+public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        TextView tvVersion = viewBinding.tvVersion;
 
         //版本信息
         tvVersion.setText(getStringFormat("VersionName: %s(VersionCode: %d)",
                 AppUtils.getAppVersionName(), AppUtils.getAppVersionCode()));
     }
 
-    @OnClick(R.id.btn_go2chat)
-    public void onViewClicked() {
+    @Override
+    public void onViewClicked(View view) {
         startActivity(new Intent(activity, MainActivity.class));
     }
 }

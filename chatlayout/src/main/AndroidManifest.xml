@@ -4,8 +4,4 @@
     <!--录音-->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <application android:label="@string/app_name">
-
-    </application>
-
 </manifest>

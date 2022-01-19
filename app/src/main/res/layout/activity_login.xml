@@ -10,6 +10,7 @@
 
     <Button
         android:id="@+id/btn_go2chat"
+        android:onClick="onViewClicked"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Go to Chat" />
@@ -18,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoLink="all"
-        android:text="View on Github:\n
-https://github.com/actor20170211030627/ChatLayout" />
+        android:text="View on Gitee:\n
+https://gitee.com/actor20170211030627/ChatLayout" />
 
     <TextView
         android:id="@+id/tv_version"

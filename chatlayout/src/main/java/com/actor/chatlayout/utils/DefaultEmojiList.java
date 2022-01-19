@@ -2,13 +2,13 @@ package com.actor.chatlayout.utils;
 
 /**
  * Description: 默认表情列表
- * Author     : 李大发
+ * Author     : ldf
  * Date       : 2019/6/3 on 14:16
  */
 public class DefaultEmojiList {
 
     //默认emoji列表, 每行8个
-    public static String[] defaultEmojiList = new String[]{
+    public static final String[] DEFAULT_EMOJI_LIST = new String[]{
             "[龇牙]",   "[调皮]", "[流汗]",  "[偷笑]", "[再见]",  "[敲打]",  "[擦汗]", "[猪头]",
             "[玫瑰]",   "[流泪]", "[大哭]",  "[嘘]",   "[酷]",    "[抓狂]", "[委屈]",  "[便便]",
             "[炸弹]",   "[菜刀]", "[可爱]",  "[色]",   "[害羞]",  "[得意]",  "[吐]",   "[微笑]",

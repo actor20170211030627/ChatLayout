@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
-        android:background="@color/colorPrimary"
+        android:layout_height="@dimen/actionBarSize"
+        android:background="@color/red_trans_CC99"
         android:gravity="center"
-        android:text="Title"
+        android:text="This is Title哦"
         android:textColor="@color/white"
         android:textSize="18sp" />
 
@@ -21,22 +22,22 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:stackFromEnd="true"
             tools:listitem="@layout/item_chat_contact" />
 
-        <com.actor.myandroidframework.widget.VoiceRecorderView
+        <com.actor.myandroidframework.widget.chat.VoiceRecorderView
             android:id="@+id/voice_recorder"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center" />
     </FrameLayout>
 
-    <com.actor.chatlayout.ChatLayout
+    <com.actor.myandroidframework.widget.chat.ChatLayout
         android:id="@+id/chat_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

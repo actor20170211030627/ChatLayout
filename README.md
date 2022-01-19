@@ -1,5 +1,5 @@
 # ChatLayout
-聊天界面按钮的简单封装...
+聊天的emoji...
  <ul>
      <li><a href="https://github.com/actor20170211030627/ChatLayout">Github</a></li>
      <li><a href="https://gitee.com/actor20170211030627/ChatLayout">Gitee码云(国内网速更快)</a></li>
@@ -15,154 +15,29 @@
 <img src="captures/example.gif" width=35%></img>
 
 ## Demo
-<a href="https://github.com/actor20170211030627/ChatLayout/raw/master/app/build/outputs/apk/debug/app-debug.apk">download apk</a> or scan qrcode:  <br/>
+<a href="app/build/outputs/apk/debug/app-debug.apk" target="_blank">download apk</a> or scan qrcode:  <br/>
 <img src="captures/qrcode.png" width=35%></img>
 
 ## Usage
-**1.** 在Application中初始化
+**1.**如何使用emoji, 可参考Demo
+<pre>
+Demo中添加了MyAndroidFrameWork依赖, 里面有一个ChatLayout聊天控件, 见 <a href="app/build.gradle" target="_blank">build.gradle</a>
+</pre>
 
-    ChatLayoutKit.init(getApplication(), true);//初始化
-    //初始化语音, 默认最大录音时长2分钟. 如果不用语音, 不用初始化
-    AudioUtils.getInstance().init(null, null);
+**2.** 在Application中初始化
+<pre>
+参考: <a href="app/src/main/java/com/chatlayout/example/Application.java" target="_blank">Application</a>
+</pre>
 
-**2.** 布局文件中xml
+**3.** 布局文件中xml
+<pre>
+参考: <a href="app/src/main/res/layout/activity_main.xml" target="_blank">activity_main.xml</a>
+</pre>
 
-    <!--1.其它布局有可能会有bug, 根部局建议用LinearLayout. (other root layout maybe bug)-->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:background="@color/colorPrimary"
-            android:gravity="center"
-            android:text="Title"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-    
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-    
-            <!--2.聊天列表(Chat list)-->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                app:stackFromEnd="true"
-                tools:listitem="@layout/item_chat_contact" />
-    
-            <!--3.按住说话(Hold To Talk)-->
-            <com.actor.myandroidframework.widget.VoiceRecorderView
-                android:id="@+id/voice_recorder"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center" />
-        </FrameLayout>
-    
-        <!--4.-->
-        <com.actor.chatlayout.ChatLayout
-            android:id="@+id/cl_chatLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:clBtnSendBackground=""  //发送按钮背景(Send Button's background), 默认@drawable/selector_btn_send_for_chat_layout(default)
-            app:clIvEmojiVisiable=""    //表情图片是否显示(emoji image visiable), 默认visible(default)
-            app:clIvPlusVisiable=""     //⊕图片是否显示(⊕ image visiable), 默认visible(default)
-            app:clIvVoiceVisiable="" /> //语音图片是否显示(voice image visiable), 默认visible(default)
-    </LinearLayout>
-
-**3.** Activity中
-
-    private RecyclerView         recyclerview;
-    private VoiceRecorderView    voiceRecorder;
-    private ChatLayout           chatLayout;
-    private ArrayList<ItemMore>  bottomViewDatas = new ArrayList<>();
-    private ChatListAdapter      chatListAdapter;
-    
-    protected void onCreate(Bundle savedInstanceState) {
-        ...
-        //初始化"⊕更多"(init "more")
-        for (int i = 0; i < 8; i++) {
-            boolean flag = i % 2 == 0;
-            int imgRes = flag? R.drawable.camera : R.drawable.picture;
-            bottomViewDatas.add(new ItemMore(imgRes, "Item" + i));
-        }
-        
-        chatLayout.init(recyclerview, voiceRecorder);
-        
-        MoreFragment moreFragment = MoreFragment.newInstance(4, 50, bottomViewDatas);
-        moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {//更多点击(click ⊕)
-            @Override
-            public void onItemClick(int position, ItemMore itemMore) {
-                toast(itemMore.itemText);
-            }
-        });
-        chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
-        //set Tab1 Icon
-		chatLayout.getTabLayout().getTabAt(1).setIcon(R.drawable.picture);
-
-        chatLayout.setOnListener(new OnListener() {
-            
-            //点击了"发送"按钮(Send Button Click)
-            @Override
-            public void onBtnSendClick(EditText etMsg) {
-                String msg = getText(etMsg);
-				if (!TextUtils.isEmpty(msg)) {
-				    etMsg.setText("");
-				    chatListAdapter.addData(msg);
-				    recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
-				}
-            }
-
-            //点击了"表情"按钮, 你可以不重写这个方法(overrideAble)
-            @Override
-            public void onIvEmojiClick(ImageView ivEmoji) {
-                toast("Emoji Click");
-            }
-
-            //点击了"⊕"按钮, 你可以不重写这个方法(overrideAble)
-            @Override
-            public void onIvPlusClick(ImageView ivPlus) {
-                toast("Plus Click");
-            }
-
-            //没语音权限, 你可以不重写这个方法(no voice record permissions, overrideAble)
-            @Override
-            public void onNoPermission(String permission) {
-                //可以调用默认处理方法. 你也可以不调用这个方法, 自己处理(call default request permission method, or deal by yourself)
-                chatLayout.showPermissionDialog();
-            }
-
-            //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
-            @Override
-            public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                toast(String.format(Locale.getDefault(), "audioPath=%s, durationMs=%d", audioPath, durationMs));
-            }
-
-            //录音失败, 你可以不重写这个方法(voice record failure, overrideAble)
-            @Override
-            public void onVoiceRecordError(Exception e) {
-                e.printStackTrace();
-            }
-
-            //还可重写其它方法(you can override other methods ...)
-            ...
-        });
-        chatListAdapter = new ChatListAdapter();
-        rvRecyclerview.setAdapter(chatListAdapter);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (chatLayout.isBottomViewGone()) super.onBackPressed();
-    }
+**4.** Activity中
+<pre>
+参考: <a href="app/src/main/java/com/chatlayout/example/activity/MainActivity.java" target="_blank">MainActivity.java</a>
+</pre>
 
 
 ## How to
@@ -193,15 +68,11 @@ Add it in your root build.gradle at the end of repositories:
     }
 
     dependencies {
-        implementation 'com.android.support:appcompat-v7:your_version'
-        implementation 'com.android.support:recyclerview-v7:your_version'
-        implementation 'com.android.support.constraint:constraint-layout:your_version'
+		implementation 'com.google.android.material:material:your_version'
+		implementation 'androidx.constraintlayout:constraintlayout:your_version'
 
-        //https://github.com/actor20170211030627/MyAndroidFrameWork
-        implementation 'com.github.actor20170211030627:MyAndroidFrameWork:1.3.4'
-
-        //https://github.com/actor20170211030627/ChatLayout
-        implementation 'com.github.actor20170211030627:ChatLayout:version'
+        //https://gitee.com/actor20170211030627/ChatLayout
+        implementation 'com.gitee.actor20170211030627:ChatLayout:version'
     }
 
 ## Thanks

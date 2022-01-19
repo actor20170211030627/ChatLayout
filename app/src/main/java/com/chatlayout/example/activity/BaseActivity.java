@@ -1,13 +1,15 @@
 package com.chatlayout.example.activity;
 
-import com.actor.myandroidframework.activity.ActorBaseActivity;
+import androidx.viewbinding.ViewBinding;
+
+import com.actor.myandroidframework.activity.ViewBindingActivity;
 
 /**
  * Description: 基类
- * Author     : 李大发
+ * Author     : ldf
  * Date       : 2020-1-3 on 17:59
  *
  * @version 1.0
  */
-public class BaseActivity extends ActorBaseActivity {
+public class BaseActivity<VB extends ViewBinding> extends ViewBindingActivity<VB> {
 }

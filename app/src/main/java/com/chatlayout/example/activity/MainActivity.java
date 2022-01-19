@@ -1,50 +1,49 @@
 package com.chatlayout.example.activity;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actor.chatlayout.ChatLayout;
-import com.actor.chatlayout.OnListener;
-import com.actor.chatlayout.bean.ItemMore;
-import com.actor.chatlayout.fragment.MoreFragment;
-import com.actor.chatlayout.utils.FaceManager;
-import com.actor.myandroidframework.widget.VoiceRecorderView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.actor.myandroidframework.widget.chat.ChatLayout;
+import com.actor.myandroidframework.widget.chat.OnListener;
+import com.actor.myandroidframework.widget.chat.VoiceRecorderView;
+import com.actor.myandroidframework.widget.chat.bean.ChatLayoutItemMore;
+import com.actor.myandroidframework.widget.chat.fragment.ChatLayoutMoreFragment;
+import com.actor.myandroidframework.widget.chat.utils.FaceManager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.chatlayout.example.R;
+import com.chatlayout.example.databinding.ActivityMainBinding;
+import com.chatlayout.example.utils.CheckUpdateUtils;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
-public class MainActivity extends BaseActivity {
+    private RecyclerView      recyclerView;
+    private VoiceRecorderView voiceRecorder;
+    private ChatLayout        chatLayout;
 
-    @BindView(R.id.recycler_view)
-    RecyclerView      recyclerview;
-    @BindView(R.id.voice_recorder)
-    VoiceRecorderView voiceRecorder;
-    @BindView(R.id.chat_layout)
-    ChatLayout        chatLayout;
-
-    private ChatListAdapter     chatListAdapter;
-    private List<String>        items           = new ArrayList<>();
-    private ArrayList<ItemMore> bottomViewDatas = new ArrayList<>();
+    private       ChatListAdapter               chatListAdapter;
+    private final List<String>                  items           = new ArrayList<>();
+    private final ArrayList<ChatLayoutItemMore> bottomViewDatas = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        recyclerView = viewBinding.recyclerView;
+        voiceRecorder = viewBinding.voiceRecorder;
+        chatLayout = viewBinding.chatLayout;
 
         for (int i = 0; i < 20; i++) {
             items.add("Hello World!    " + i);
@@ -52,32 +51,40 @@ public class MainActivity extends BaseActivity {
         for (int i = 0; i < 8; i++) {
             boolean flag = i % 2 == 0;
             int imgRes = flag ? R.drawable.camera : R.drawable.picture;
-            bottomViewDatas.add(new ItemMore(imgRes, "Item" + i));
+            bottomViewDatas.add(new ChatLayoutItemMore(imgRes, "Item" + i));
         }
 
-        chatLayout.init(recyclerview, voiceRecorder);
+        chatLayout.init(recyclerView, voiceRecorder);
 
-        MoreFragment moreFragment = MoreFragment.newInstance(4, 50, bottomViewDatas);
-        moreFragment.setOnItemClickListener(new MoreFragment.OnItemClickListener() {//更多点击
+        //MoreFragment
+        ChatLayoutMoreFragment moreFragment = ChatLayoutMoreFragment.newInstance(4, 50, bottomViewDatas);
+        moreFragment.setOnItemClickListener(new ChatLayoutMoreFragment.OnItemClickListener() {
+            //更多点击
             @Override
-            public void onItemClick(int position, ItemMore itemMore) {
+            public void onItemClick(int position, ChatLayoutItemMore itemMore) {
                 toast(itemMore.itemText);
             }
         });
         chatLayout.setBottomFragment(getSupportFragmentManager(), moreFragment);
-        //set Tab1 Icon
-        chatLayout.getTabLayout().getTabAt(1).setIcon(R.drawable.picture);
+        //set Tab Icon
+//        chatLayout.getTabLayout().getTabAt(0).setIcon(R.drawable.emoji_small);
+        TabLayout.Tab tabAt1 = chatLayout.getTabLayout().getTabAt(1);
+        if (tabAt1 != null) {
+            tabAt1.setIcon(R.drawable.picture);
+        }
 
+        /**
+         * 设置点击事件
+         */
         chatLayout.setOnListener(new OnListener() {
-
-            //点击了"发送"按钮(Send Button Click)
             @Override
             public void onBtnSendClick(EditText etMsg) {
+                //点击了"发送"按钮(Send Button Click)
                 String msg = getText(etMsg);
                 if (!TextUtils.isEmpty(msg)) {
                     etMsg.setText("");
                     chatListAdapter.addData(msg);
-                    recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
+                    recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
                 }
             }
 
@@ -103,9 +110,8 @@ public class MainActivity extends BaseActivity {
             //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                chatListAdapter.addData(String.format(Locale.getDefault(), "audioPath=%s, " +
-                        "durationMs=%d", audioPath, durationMs));
-                recyclerview.scrollToPosition(chatListAdapter.getItemCount() - 1);
+                chatListAdapter.addData(getStringFormat("audioPath=%s, durationMs=%d", audioPath, durationMs));
+                recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
             }
 
             //录音失败, 你可以不重写这个方法(voice record failure, overrideAble)
@@ -118,13 +124,16 @@ public class MainActivity extends BaseActivity {
         });
 
         chatListAdapter = new ChatListAdapter(items);
-        chatListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+        chatListAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemChildClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
                 toast(items.get(position));
             }
         });
-        recyclerview.setAdapter(chatListAdapter);
+        recyclerView.setAdapter(chatListAdapter);
+
+        //检查更新
+        new CheckUpdateUtils().check(this);
     }
 
     /**
@@ -134,11 +143,12 @@ public class MainActivity extends BaseActivity {
 
         public ChatListAdapter(@Nullable List<String> data) {
             super(R.layout.item_chat_contact, data);
+            addChildClickViewIds(R.id.tv);
         }
 
         @Override
         protected void convert(@NonNull BaseViewHolder helper, String item) {
-            TextView tv = helper.addOnClickListener(R.id.tv).getView(R.id.tv);
+            TextView tv = helper.getView(R.id.tv);
             FaceManager.handlerEmojiText(tv, FaceManager.EMOJI_REGEX, item);
         }
     }
@@ -148,6 +158,8 @@ public class MainActivity extends BaseActivity {
      */
     @Override
     public void onBackPressed() {
-        if (chatLayout.isBottomViewGone()) super.onBackPressed();
+        if (chatLayout.isBottomViewGone()) {
+            super.onBackPressed();
+        }
     }
 }
