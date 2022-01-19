@@ -18,6 +18,7 @@ import com.chatlayout.example.adapter.ChatListAdapter;
 import com.chatlayout.example.databinding.ActivityMainBinding;
 import com.chatlayout.example.utils.CheckUpdateUtils;
 import com.google.android.material.tabs.TabLayout;
+import com.chatlayout.example.info.MessageItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private ChatLayout        chatLayout;
 
     private       ChatListAdapter               chatListAdapter;
-    private final List<String>                  items           = new ArrayList<>();
+    private final List<MessageItem>             items           = new ArrayList<>();
     private final ArrayList<ChatLayoutItemMore> bottomViewDatas = new ArrayList<>();
 
     @Override
@@ -39,10 +40,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         voiceRecorder = viewBinding.voiceRecorder;
         chatLayout = viewBinding.chatLayout;
 
+        //消息列表
+        items.clear();
+        chatListAdapter = new ChatListAdapter(items);
         for (int i = 0; i < 20; i++) {
-            items.add("Hello World!    " + i);
+            items.add(new MessageItem("Hello World!    " + i));
         }
 
+        //右下角⊕More
         for (int i = 0; i < 8; i++) {
             boolean flag = i % 2 == 0;
             int imgRes = flag ? R.drawable.camera : R.drawable.picture;
@@ -78,7 +83,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 String msg = getText(etMsg);
                 if (!TextUtils.isEmpty(msg)) {
                     etMsg.setText("");
-                    chatListAdapter.addData(msg);
+                    chatListAdapter.addData(new MessageItem(msg));
                     recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
                 }
             }
@@ -105,7 +110,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             //录音成功, 你可以不重写这个方法(voice record success, overrideAble)
             @Override
             public void onVoiceRecordSuccess(@NonNull String audioPath, long durationMs) {
-                chatListAdapter.addData(getStringFormat("audioPath=%s, durationMs=%d", audioPath, durationMs));
+                chatListAdapter.addData(new MessageItem(audioPath, durationMs));
                 recyclerView.scrollToPosition(chatListAdapter.getItemCount() - 1);
             }
 

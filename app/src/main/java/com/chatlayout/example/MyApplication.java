@@ -33,7 +33,7 @@ public class MyApplication extends ActorApplication {
     @Nullable
     @Override
     protected OkHttpClient.Builder configOkHttpClientBuilder(OkHttpClient.Builder builder) {
-        return null;
+        return builder;
     }
 
     @NonNull

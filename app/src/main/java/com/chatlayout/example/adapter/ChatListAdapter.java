@@ -1,17 +1,18 @@
 package com.chatlayout.example.adapter;
 
-import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.actor.myandroidframework.utils.TextUtils2;
+import com.actor.myandroidframework.utils.audio.AudioUtils;
 import com.actor.myandroidframework.widget.chat.utils.FaceManager;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.chatlayout.example.R;
+import com.chatlayout.example.info.MessageItem;
 
 import java.util.List;
 
@@ -22,23 +23,33 @@ import java.util.List;
  * date       : 2021/5/14 on 18
  * @version 1.0
  */
-public class ChatListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
+public class ChatListAdapter extends BaseQuickAdapter<MessageItem, BaseViewHolder> {
 
-    public ChatListAdapter(@Nullable List<String> data) {
+    public ChatListAdapter(@Nullable List<MessageItem> data) {
         super(R.layout.item_chat_contact, data);
         //item点击
         addChildClickViewIds(R.id.tv);
-        setOnItemChildClickListener(new OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                ToastUtils.showShort(getItem(position));
+        setOnItemClickListener((adapter, view, position) -> {
+            MessageItem item = getItem(position);
+            if (item != null) {
+                String message = item.message;
+                if (message != null) {
+                    ToastUtils.showShort(message);
+                } else {
+                    AudioUtils.getInstance().playRecord(item.audioPath, null);
+                }
             }
         });
     }
 
     @Override
-    protected void convert(@NonNull BaseViewHolder helper, String item) {
+    protected void convert(@NonNull BaseViewHolder helper, MessageItem item) {
         TextView tv = helper.getView(R.id.tv);
-        FaceManager.handlerEmojiText(tv, FaceManager.EMOJI_REGEX, item);
+        String message = item.message;
+        if (message != null) {
+            FaceManager.handlerEmojiText(tv, FaceManager.EMOJI_REGEX, message);
+        } else {
+            tv.setText(TextUtils2.getStringFormat("audioPath = %s\ndurationMs = %dms", item.audioPath, item.durationMs));
+        }
     }
 }
