@@ -2,13 +2,10 @@ package com.chatlayout.example.activity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.actor.myandroidframework.widget.chat.ChatLayout;
@@ -16,11 +13,8 @@ import com.actor.myandroidframework.widget.chat.OnListener;
 import com.actor.myandroidframework.widget.chat.VoiceRecorderView;
 import com.actor.myandroidframework.widget.chat.bean.ChatLayoutItemMore;
 import com.actor.myandroidframework.widget.chat.fragment.ChatLayoutMoreFragment;
-import com.actor.myandroidframework.widget.chat.utils.FaceManager;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.chatlayout.example.R;
+import com.chatlayout.example.adapter.ChatListAdapter;
 import com.chatlayout.example.databinding.ActivityMainBinding;
 import com.chatlayout.example.utils.CheckUpdateUtils;
 import com.google.android.material.tabs.TabLayout;
@@ -48,6 +42,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         for (int i = 0; i < 20; i++) {
             items.add("Hello World!    " + i);
         }
+
         for (int i = 0; i < 8; i++) {
             boolean flag = i % 2 == 0;
             int imgRes = flag ? R.drawable.camera : R.drawable.picture;
@@ -123,34 +118,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             //还可重写其它方法override other method ...
         });
 
-        chatListAdapter = new ChatListAdapter(items);
-        chatListAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(@NonNull BaseQuickAdapter<?, ?> adapter, @NonNull View view, int position) {
-                toast(items.get(position));
-            }
-        });
-        recyclerView.setAdapter(chatListAdapter);
+        recyclerView.setAdapter(chatListAdapter = new ChatListAdapter(items));
 
         //检查更新
         new CheckUpdateUtils().check(this);
-    }
-
-    /**
-     * 聊天列表的Adapter
-     */
-    public class ChatListAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
-
-        public ChatListAdapter(@Nullable List<String> data) {
-            super(R.layout.item_chat_contact, data);
-            addChildClickViewIds(R.id.tv);
-        }
-
-        @Override
-        protected void convert(@NonNull BaseViewHolder helper, String item) {
-            TextView tv = helper.getView(R.id.tv);
-            FaceManager.handlerEmojiText(tv, FaceManager.EMOJI_REGEX, item);
-        }
     }
 
     /**

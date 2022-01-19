@@ -1,26 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildFeatures {
         viewBinding = true
     }
 
     defaultConfig {
         applicationId "com.chatlayout.example"
-        minSdkVersion 21
-        targetSdkVersion 29
-        //noinspection HighAppVersionCode
-        versionCode 2022011901
-        versionName "2.0.1"
+        minSdkVersion       rootProject.ext.android.minSdkVersion
+        targetSdkVersion    rootProject.ext.android.targetSdkVersion
+        versionCode         rootProject.ext.android.versionCode
+        versionName         rootProject.ext.android.versionName
     }
     signingConfigs {
-        debug {
-            keyAlias 'actor'
-            keyPassword '123456'
-            storeFile file('actorKey.jks')
-            storePassword '123456'
-        }
         release {
             keyAlias 'actor'
             keyPassword '123456'
@@ -29,6 +22,10 @@ android {
         }
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -39,10 +36,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+//    implementation rootProject.ext.dependencies.constraint_layout
 
     /**
      * ↓这里面有ChatLayout聊天控件
@@ -54,4 +52,3 @@ dependencies {
 //    implementation 'com.gitee.actor20170211030627:ChatLayout:2.0.1'
     implementation project(':chatlayout')
 }
-

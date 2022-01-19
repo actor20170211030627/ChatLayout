@@ -7,6 +7,7 @@ import com.actor.chatlayout.utils.DefaultEmojiList;
 import com.actor.myandroidframework.application.ActorApplication;
 import com.actor.myandroidframework.utils.audio.AudioUtils;
 import com.actor.myandroidframework.widget.chat.ChatLayoutKit;
+import com.chatlayout.example.utils.Global;
 
 import okhttp3.OkHttpClient;
 
@@ -38,7 +39,7 @@ public class MyApplication extends ActorApplication {
     @NonNull
     @Override
     protected String getBaseUrl(boolean isDebugMode) {
-        return "https://api.github.com";
+        return Global.BASE_URL;
     }
 
     @Override
